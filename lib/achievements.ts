@@ -1,6 +1,6 @@
+import { CATEGORIES } from "@/lib/categories";
 import { friendlySupabaseError } from "@/lib/supabase/errors";
 import {
-  CATEGORIES,
   type Achievement,
   type AchievementWithEvidence,
   type Category,
@@ -54,7 +54,7 @@ const SHORT_TEXT_LIMIT = 160;
 const DESCRIPTION_LIMIT = 5000;
 
 export function isCategory(value: string): value is Category {
-  return (CATEGORIES as readonly string[]).includes(value);
+  return CATEGORIES.some((item) => item.value === value);
 }
 
 export function emptyDraft(): AchievementDraft {

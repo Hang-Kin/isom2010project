@@ -1,4 +1,10 @@
-export type Category = "award" | "activity" | "volunteering" | "scholarship";
+export type Category =
+  | "award"
+  | "activity"
+  | "volunteering"
+  | "scholarship"
+  | "internship"
+  | "other";
 
 export type Achievement = {
   id: string;
@@ -50,22 +56,4 @@ export type Profile = {
   created_at: string;
 };
 
-export const CATEGORIES: Category[] = [
-  "award",
-  "activity",
-  "volunteering",
-  "scholarship",
-];
-
-export function categoryLabel(category: Category): string {
-  switch (category) {
-    case "award":
-      return "Award";
-    case "activity":
-      return "Activity";
-    case "volunteering":
-      return "Volunteering";
-    case "scholarship":
-      return "Scholarship";
-  }
-}
+export { categoryLabel } from "@/lib/categories";
