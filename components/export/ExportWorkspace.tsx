@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { PdfChecklist } from "@/components/export/PdfChecklist";
 import { PageHeader, StatusMessage } from "@/components/ui";
 import { formatAnswer } from "@/lib/answers";
 import { normalizeAchievementWithEvidence } from "@/lib/achievements";
@@ -62,6 +63,8 @@ export function ExportWorkspace() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [profileWarning, setProfileWarning] = useState<string | null>(null);
   const [username, setUsername] = useState("");
+  const [yearOfStudy, setYearOfStudy] = useState("");
+  const [major, setMajor] = useState("");
   const [email, setEmail] = useState("");
   const [applicationName, setApplicationName] = useState("");
   const [maxItems, setMaxItems] = useState("");
@@ -75,6 +78,8 @@ export function ExportWorkspace() {
   const [generateError, setGenerateError] = useState<string | null>(null);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [pdfBytes, setPdfBytes] = useState(0);
+  const [achievementCount, setAchievementCount] = useState(0);
+  const [evidencePageCount, setEvidencePageCount] = useState(0);
   const [skipped, setSkipped] = useState<SkippedFile[]>([]);
   const [replacedNonLatin, setReplacedNonLatin] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
@@ -118,7 +123,7 @@ export function ExportWorkspace() {
             .order("created_at", { ascending: false }),
           supabase
             .from("profiles")
-            .select("username")
+            .select("username, year_of_study, major")
             .eq("id", userData.user.id)
             .maybeSingle(),
         ]);
@@ -138,6 +143,8 @@ export function ExportWorkspace() {
           );
         } else {
           setUsername(profileResult.data?.username ?? "");
+          setYearOfStudy(profileResult.data?.year_of_study ?? "");
+          setMajor(profileResult.data?.major ?? "");
           setProfileWarning(null);
         }
         setLoadError(null);
@@ -248,6 +255,9 @@ export function ExportWorkspace() {
     setGenerateError(null);
     setSkipped([]);
     setReplacedNonLatin(false);
+    setAchievementCount(0);
+    setEvidencePageCount(0);
+    replacePdf(null);
 
     try {
       const entries = [];
@@ -267,11 +277,12 @@ export function ExportWorkspace() {
         entries.push({ achievement, files });
       }
 
-      const packetName = applicationName.trim() || "Evidence packet";
       const result = await buildEvidencePdf({
-        applicationName: packetName,
-        username: username.trim() || "Not set",
-        userEmail: email || "Not set",
+        applicationName: applicationName.trim(),
+        username: username.trim(),
+        userEmail: email.trim(),
+        yearOfStudy: yearOfStudy.trim() || null,
+        major: major.trim() || null,
         generatedAt: new Date(),
         entries,
       });
@@ -279,6 +290,8 @@ export function ExportWorkspace() {
       const blob = new Blob([Uint8Array.from(result.bytes)], { type: "application/pdf" });
       replacePdf(URL.createObjectURL(blob));
       setPdfBytes(result.bytes.byteLength);
+      setAchievementCount(result.achievementCount);
+      setEvidencePageCount(result.evidencePageCount);
       setSkipped(result.skipped);
       setReplacedNonLatin(result.replacedNonLatin);
     } catch (cause) {
@@ -541,15 +554,24 @@ export function ExportWorkspace() {
                 {generateError ? <StatusMessage tone="error">{generateError}</StatusMessage> : null}
                 {pdfUrl ? (
                   <div className="space-y-3">
-                    <StatusMessage tone="success">
-                      PDF ready. {(pdfBytes / (1024 * 1024)).toFixed(2)} MB
-                    </StatusMessage>
-                    {replacedNonLatin ? (
-                      <StatusMessage tone="warning">
-                        Some characters were replaced with &quot;?&quot; because the PDF font does
-                        not support non-Latin text.
-                      </StatusMessage>
-                    ) : null}
+                    <StatusMessage tone="success">PDF ready.</StatusMessage>
+                    <PdfChecklist
+                      achievements={achievementCount}
+                      evidencePages={evidencePageCount}
+                      fileSizeBytes={pdfBytes}
+                      warnings={[
+                        ...(replacedNonLatin
+                          ? ["Some characters are not supported in the PDF"]
+                          : []),
+                        ...(skipped.length > 0
+                          ? [
+                              skipped.length === 1
+                                ? "1 evidence file could not be included."
+                                : `${skipped.length} evidence files could not be included.`,
+                            ]
+                          : []),
+                      ]}
+                    />
                     <iframe
                       title="Evidence PDF preview"
                       src={pdfUrl}
