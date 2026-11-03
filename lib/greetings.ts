@@ -68,17 +68,15 @@ export function selectGreetingPhrase(
 }
 
 export function summaryLine(achievements: number | null, evidenceFiles: number | null): string {
-  return `${formatCount(achievements, "achievement", "achievements")} · ${formatCount(evidenceFiles, "evidence file", "evidence files")}`;
+  return `Achievements: ${countOrDash(achievements)} · Evidence files: ${countOrDash(evidenceFiles)}`;
 }
 
 function isGreetingPhrase(value: string): value is (typeof GREETING_PHRASES)[number] {
   return (GREETING_PHRASES as readonly string[]).includes(value);
 }
 
-function formatCount(count: number | null, singular: string, plural: string): string {
-  if (count === null) return `- ${plural}`;
-  if (count === 1) return `1 ${singular}`;
-  return `${count} ${plural}`;
+function countOrDash(count: number | null): string {
+  return count === null ? "-" : String(count);
 }
 
 function hourInHongKong(date: Date): number {
