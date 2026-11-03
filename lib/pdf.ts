@@ -8,6 +8,7 @@ import {
   type PDFPage,
 } from "pdf-lib";
 import { formatDateRange, formatHours } from "@/lib/achievements";
+import { getActivePresetId, pdfTitleFor, type PresetId } from "@/lib/presets";
 import type { AchievementWithEvidence, EvidenceFile } from "@/lib/types";
 
 const PAGE_WIDTH = 595.28;
@@ -356,11 +357,11 @@ class Layout {
     return bottom;
   }
 
-  beginCover() {
+  beginCover(coverTitle = "Evidence Portfolio") {
     this.flowHeader = null;
     this.flowContinued = false;
     this.openPage("blank");
-    this.flowHeader = "Evidence Portfolio";
+    this.flowHeader = coverTitle;
     this.flowContinued = true;
   }
 
@@ -592,9 +593,11 @@ class Layout {
     generatedAt: Date;
     rows: string[][];
     skipped: SkippedFile[];
+    coverTitle?: string;
   }) {
-    this.beginCover();
-    this.drawParagraph("Evidence Portfolio", { font: "bold", size: 22 });
+    const coverTitle = optionalText(input.coverTitle) ?? "Evidence Portfolio";
+    this.beginCover(coverTitle);
+    this.drawParagraph(coverTitle, { font: "bold", size: 22 });
     this.drawRule();
     this.gap(6);
     this.drawParagraph(`Applicant: ${input.applicant}`);
@@ -897,6 +900,7 @@ export async function buildEvidencePdf(input: {
   entries: PdfEntry[];
   yearOfStudy?: string | null;
   major?: string | null;
+  preset?: PresetId | null;
 }): Promise<BuiltPdf> {
   const doc = await PDFDocument.create();
   const regular = await doc.embedFont(StandardFonts.Helvetica);
@@ -929,6 +933,9 @@ export async function buildEvidencePdf(input: {
   }
 
   const applicant = applicantName(input.username, input.userEmail);
+  const coverTitle = pdfTitleFor(
+    input.preset !== undefined ? input.preset : getActivePresetId(),
+  );
   layout.drawCover({
     applicationName: input.applicationName,
     applicant,
@@ -943,6 +950,7 @@ export async function buildEvidencePdf(input: {
       evidenceList(entry),
     ]),
     skipped,
+    coverTitle,
   });
 
   for (const entry of prepared) {
@@ -963,7 +971,7 @@ export async function buildEvidencePdf(input: {
 
   layout.stampFooters(applicant);
 
-  const metadataTitle = optionalText(input.applicationName) ?? "Evidence Portfolio";
+  const metadataTitle = optionalText(input.applicationName) ?? coverTitle;
   try {
     doc.setTitle(metadataTitle);
     doc.setAuthor(applicant);
