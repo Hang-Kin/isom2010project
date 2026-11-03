@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ImportNavLink } from "@/components/import/ImportNavLink";
 
 const links = [
   { href: "/dashboard/achievements", label: "Achievements" },
@@ -26,6 +27,8 @@ export function DashboardNav() {
           </Link>
         );
       })}
+      {/* FEAT-4: import */}
+      <ImportNavLink />
       {/* FEAT-5: backup */}
       <Link
         href="/dashboard/backup"
