@@ -26,6 +26,22 @@ export function DashboardNav() {
           </Link>
         );
       })}
+      {/* FEAT-5: backup */}
+      <Link
+        href="/dashboard/backup"
+        aria-current={
+          pathname === "/dashboard/backup" || pathname.startsWith("/dashboard/backup/")
+            ? "page"
+            : undefined
+        }
+        className={
+          pathname === "/dashboard/backup" || pathname.startsWith("/dashboard/backup/")
+            ? "btn btn-secondary"
+            : "btn btn-ghost"
+        }
+      >
+        Backup
+      </Link>
     </nav>
   );
 }
