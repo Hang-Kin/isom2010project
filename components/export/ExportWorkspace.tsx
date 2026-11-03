@@ -6,12 +6,13 @@ import { PdfChecklist } from "@/components/export/PdfChecklist";
 import { PresetPicker } from "@/components/export/PresetPicker";
 import { useBindPacketTarget } from "@/components/export/PacketBar";
 import { RelevancePanel } from "@/components/export/RelevancePanel";
-import { PageHeader, StatusMessage } from "@/components/ui";
+import { StatusMessage } from "@/components/ui";
 import { formatAnswer } from "@/lib/answers";
 import { normalizeAchievementWithEvidence } from "@/lib/achievements";
 import { downloadEvidenceBytes } from "@/lib/evidence";
-import { keepExistingIds, type PacketSettings } from "@/lib/packets";
+import { keepExistingIds, normalizePacketSettings, type PacketSettings } from "@/lib/packets";
 import { buildEvidencePdf, type SkippedFile } from "@/lib/pdf";
+import { getActiveChoice, publishPresetChoice, type PresetChoice } from "@/lib/presets";
 import { friendlySupabaseError } from "@/lib/supabase/errors";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -78,6 +79,8 @@ export function ExportWorkspace() {
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [choice, setChoice] = useState<PresetChoice>(() => getActiveChoice());
+  const [presetRevision, setPresetRevision] = useState(0);
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [copyError, setCopyError] = useState<string | null>(null);
@@ -196,7 +199,7 @@ export function ExportWorkspace() {
     if (!(id in drafts)) return false;
     const achievement = byId.get(id);
     if (!achievement) return false;
-    return (drafts[id] ?? "") !== formatAnswer(achievement);
+    return (drafts[id] ?? "") !== formatAnswer(achievement, choice);
   });
 
   function applyLoadedPacket(settings: PacketSettings, achievementIds: string[]) {
@@ -207,25 +210,32 @@ export function ExportWorkspace() {
       throw new Error("Achievements could not be loaded, so this packet cannot be applied.");
     }
 
+    const next = normalizePacketSettings(settings);
     const { kept, dropped } = keepExistingIds(
       achievementIds,
       items.map((item) => item.id),
     );
-    setApplicationName(settings.applicationName ?? "");
-    setMaxItems(settings.maxItems == null ? "" : String(settings.maxItems));
-    setDateFrom(settings.dateFrom ?? "");
-    setDateTo(settings.dateTo ?? "");
+    const nextChoice: PresetChoice = { preset: next.preset, style: next.style };
+    setApplicationName(next.applicationName);
+    setMaxItems(next.maxItems == null ? "" : String(next.maxItems));
+    setDateFrom(next.dateFrom ?? "");
+    setDateTo(next.dateTo ?? "");
+    setChoice(nextChoice);
+    setPresetRevision((current) => current + 1);
+    publishPresetChoice(nextChoice);
+    setAnswerLimit({ limit: next.wordLimit, unit: next.wordUnit });
     setSelectedIds(kept);
     setDrafts(() => {
-      const next: Record<string, string> = {};
+      const restored: Record<string, string> = {};
       for (const id of kept) {
         const achievement = items.find((item) => item.id === id);
-        if (achievement) next[id] = formatAnswer(achievement);
+        if (achievement) restored[id] = formatAnswer(achievement, nextChoice);
       }
-      return next;
+      return restored;
     });
     setSkipped([]);
     setGenerateError(null);
+    setCopyError(null);
     setReplacedNonLatin(false);
     setAchievementCount(0);
     setEvidencePageCount(0);
@@ -237,12 +247,16 @@ export function ExportWorkspace() {
   // FEAT-2: packets — PacketBar on the export page reads this target.
   useBindPacketTarget({
     getCurrent: () => ({
-      settings: {
+      settings: normalizePacketSettings({
         applicationName,
+        preset: choice.preset,
+        style: choice.style,
         maxItems: max.limit,
         dateFrom: dateFrom || null,
         dateTo: dateTo || null,
-      },
+        wordLimit: answerLimit.limit,
+        wordUnit: answerLimit.unit,
+      }),
       achievementIds: selectedIds,
     }),
     onLoad: (settings, achievementIds) => applyLoadedPacket(settings, achievementIds),
@@ -277,7 +291,7 @@ export function ExportWorkspace() {
       }
       if (id in current) return current;
       const achievement = byId.get(id);
-      return achievement ? { ...current, [id]: formatAnswer(achievement) } : current;
+      return achievement ? { ...current, [id]: formatAnswer(achievement, choice) } : current;
     });
     replacePdf(null);
   }
@@ -299,7 +313,7 @@ export function ExportWorkspace() {
   function answerFor(id: string): string {
     if (id in drafts) return drafts[id] ?? "";
     const achievement = byId.get(id);
-    return achievement ? formatAnswer(achievement) : "";
+    return achievement ? formatAnswer(achievement, choice) : "";
   }
 
   async function copyText(id: string, text: string) {
@@ -352,6 +366,7 @@ export function ExportWorkspace() {
         major: major.trim() || null,
         generatedAt: new Date(),
         entries,
+        preset: choice.preset,
       });
 
       const blob = new Blob([Uint8Array.from(result.bytes)], { type: "application/pdf" });
@@ -381,11 +396,6 @@ export function ExportWorkspace() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Export"
-        lede="Select entries -> check answers -> generate PDF."
-      />
-
       {loading ? <StatusMessage tone="info">Loading achievements…</StatusMessage> : null}
       {profileWarning ? <StatusMessage tone="warning">{profileWarning}</StatusMessage> : null}
       {loadError ? (
@@ -416,6 +426,37 @@ export function ExportWorkspace() {
 
       {!loading && items.length > 0 ? (
         <>
+          <section className="card" aria-label="Application preset">
+            {/* FEAT-1: presets */}
+            <PresetPicker
+              value={choice}
+              revision={presetRevision}
+              achievements={items}
+              selectedIds={selectedIds}
+              drafts={drafts}
+              disabled={generating}
+              onChange={(next) => {
+                setChoice(next);
+                replacePdf(null);
+              }}
+              onDraftsChange={setDrafts}
+              onSelectedIdsChange={(ids) => {
+                setSelectedIds(ids);
+                replacePdf(null);
+              }}
+            />
+          </section>
+
+          {/* FEAT-6: relevance */}
+          <RelevancePanel
+            achievements={items}
+            selectedIds={selectedIds}
+            onSelect={(ids) => {
+              setSelectedIds(ids);
+              replacePdf(null);
+            }}
+          />
+
           <section className="card space-y-4">
             <h2 className="font-serif text-2xl">Settings</h2>
             <div className="grid gap-4 md:grid-cols-2">
@@ -468,30 +509,7 @@ export function ExportWorkspace() {
             <p className="text-sm text-muted">
               Date window and max items only add warnings. They do not remove entries from the PDF.
             </p>
-            {/* FEAT-1: presets */}
-            <PresetPicker
-              achievements={items}
-              selectedIds={selectedIds}
-              drafts={drafts}
-              disabled={generating}
-              onChange={() => replacePdf(null)}
-              onDraftsChange={setDrafts}
-              onSelectedIdsChange={(ids) => {
-                setSelectedIds(ids);
-                replacePdf(null);
-              }}
-            />
           </section>
-
-          {/* FEAT-6: relevance */}
-          <RelevancePanel
-            achievements={items}
-            selectedIds={selectedIds}
-            onSelect={(ids) => {
-              setSelectedIds(ids);
-              replacePdf(null);
-            }}
-          />
 
           <div className="grid items-start gap-6 lg:grid-cols-2">
             <section className="card space-y-4">
@@ -531,7 +549,6 @@ export function ExportWorkspace() {
               </ul>
             </section>
 
-            <div className="space-y-6">
               <section className="card space-y-4">
                 <h2 className="font-serif text-2xl">Selected order</h2>
                 {selected.length === 0 ? (
@@ -576,9 +593,14 @@ export function ExportWorkspace() {
                   </ol>
                 )}
               </section>
+          </div>
 
               {/* FEAT-3: counter */}
-              <AnswerLimitControl value={answerLimit} onChange={setAnswerLimit} />
+              <AnswerLimitControl
+                key={presetRevision}
+                value={answerLimit}
+                onChange={setAnswerLimit}
+              />
 
               <section className="card space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -725,8 +747,6 @@ export function ExportWorkspace() {
                   </div>
                 ) : null}
               </section>
-            </div>
-          </div>
         </>
       ) : null}
     </div>

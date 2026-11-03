@@ -45,6 +45,17 @@ export function DashboardNav() {
       >
         Backup
       </Link>
+      <Link
+        href="/profile"
+        aria-current={pathname === "/profile" || pathname.startsWith("/profile/") ? "page" : undefined}
+        className={
+          pathname === "/profile" || pathname.startsWith("/profile/")
+            ? "btn btn-secondary"
+            : "btn btn-ghost"
+        }
+      >
+        Profile
+      </Link>
     </nav>
   );
 }

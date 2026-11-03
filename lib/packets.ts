@@ -1,7 +1,8 @@
+import { isAnswerStyle, isPresetId, PRESETS, type AnswerStyle, type PresetId } from "@/lib/presets";
 import { friendlySupabaseError } from "@/lib/supabase/errors";
 import { createClient } from "@/lib/supabase/client";
 
-/** Fields the export page can round-trip. Optional keys stay optional so later features can add them. */
+/** Fields the export page can round-trip. Optional keys stay optional so older packets still load. */
 export type PacketSettings = {
   applicationName: string;
   preset?: string;
@@ -10,6 +11,20 @@ export type PacketSettings = {
   dateFrom?: string | null;
   dateTo?: string | null;
   wordLimit?: number | null;
+  /** "words" or "chars". Missing on packets saved before the answer limit existed. */
+  wordUnit?: string;
+};
+
+/** Settings after missing or unrecognised values fall back to the export page defaults. */
+export type PacketPageSettings = {
+  applicationName: string;
+  preset: PresetId;
+  style: AnswerStyle;
+  maxItems: number | null;
+  dateFrom: string | null;
+  dateTo: string | null;
+  wordLimit: number | null;
+  wordUnit: "words" | "chars";
 };
 
 export type Packet = {
@@ -49,8 +64,28 @@ export type PacketTargetHandlers = {
   blockReason: () => string | null;
 };
 
+const WORD_UNITS = new Set(["words", "chars"]);
+
+/** Fill preset, style, word limit, and unit when an older packet omitted them. */
+export function normalizePacketSettings(settings: PacketSettings): PacketPageSettings {
+  const preset = settings.preset && isPresetId(settings.preset) ? settings.preset : "general";
+  const style =
+    settings.style && isAnswerStyle(settings.style) ? settings.style : PRESETS[preset].defaultStyle;
+  const wordUnit = settings.wordUnit === "chars" ? "chars" : "words";
+  return {
+    applicationName: settings.applicationName ?? "",
+    preset,
+    style,
+    maxItems: settings.maxItems ?? null,
+    dateFrom: settings.dateFrom ?? null,
+    dateTo: settings.dateTo ?? null,
+    wordLimit: settings.wordLimit ?? null,
+    wordUnit,
+  };
+}
+
 export const EMPTY_PACKET_SNAPSHOT: PacketSnapshot = {
-  settings: { applicationName: "" },
+  settings: normalizePacketSettings({ applicationName: "" }),
   achievementIds: [],
 };
 
@@ -77,6 +112,7 @@ const KNOWN_KEYS = new Set<string>([
   "dateFrom",
   "dateTo",
   "wordLimit",
+  "wordUnit",
 ]);
 
 type PacketTarget = PacketTargetHandlers;
@@ -181,12 +217,7 @@ export function uiPacketSnapshot(
   achievementIds: string[],
 ): PacketSnapshot {
   return {
-    settings: {
-      applicationName: settings.applicationName ?? "",
-      maxItems: settings.maxItems ?? null,
-      dateFrom: settings.dateFrom ?? null,
-      dateTo: settings.dateTo ?? null,
-    },
+    settings: normalizePacketSettings(settings),
     achievementIds,
   };
 }
@@ -286,6 +317,9 @@ export function readStoredSettings(value: unknown): {
   if ("dateFrom" in value) settings.dateFrom = readOptionalDate(value.dateFrom);
   if ("dateTo" in value) settings.dateTo = readOptionalDate(value.dateTo);
   if ("wordLimit" in value) settings.wordLimit = readOptionalLimit(value.wordLimit);
+  if (typeof value.wordUnit === "string" && WORD_UNITS.has(value.wordUnit)) {
+    settings.wordUnit = value.wordUnit;
+  }
 
   const extraSettings: Record<string, unknown> = {};
   for (const [key, extra] of Object.entries(value)) {
@@ -357,6 +391,12 @@ function cleanDate(value: unknown, label: string): string | null {
   return value;
 }
 
+function cleanWordUnit(value: unknown): "words" | "chars" | null {
+  if (value === null || value === "") return null;
+  if (value === "words" || value === "chars") return value;
+  throw new Error("Word limit unit must be words or characters.");
+}
+
 export function sanitizeSettingsPayload(input: Record<string, unknown>): Record<string, unknown> {
   const applicationName =
     typeof input.applicationName === "string" ? input.applicationName.trim() : "";
@@ -374,6 +414,7 @@ export function sanitizeSettingsPayload(input: Record<string, unknown>): Record<
   if ("dateFrom" in input) next.dateFrom = cleanDate(input.dateFrom, "Start date");
   if ("dateTo" in input) next.dateTo = cleanDate(input.dateTo, "End date");
   if ("wordLimit" in input) next.wordLimit = cleanLimit(input.wordLimit, "Word limit");
+  if ("wordUnit" in input) next.wordUnit = cleanWordUnit(input.wordUnit);
 
   for (const [key, value] of Object.entries(input)) {
     if (KNOWN_KEYS.has(key)) continue;
