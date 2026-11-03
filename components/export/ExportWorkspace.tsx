@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PdfChecklist } from "@/components/export/PdfChecklist";
+import { RelevancePanel } from "@/components/export/RelevancePanel";
 import { PageHeader, StatusMessage } from "@/components/ui";
 import { formatAnswer } from "@/lib/answers";
 import { normalizeAchievementWithEvidence } from "@/lib/achievements";
@@ -402,6 +403,16 @@ export function ExportWorkspace() {
               Date window and max items only add warnings. They do not remove entries from the PDF.
             </p>
           </section>
+
+          {/* FEAT-6: relevance */}
+          <RelevancePanel
+            achievements={items}
+            selectedIds={selectedIds}
+            onSelect={(ids) => {
+              setSelectedIds(ids);
+              replacePdf(null);
+            }}
+          />
 
           <div className="grid items-start gap-6 lg:grid-cols-2">
             <section className="card space-y-4">
