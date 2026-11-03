@@ -37,12 +37,12 @@ export function StatusMessage({
         : "border-line bg-card text-foreground";
 
   return (
-    <p
+    <div
       role={tone === "error" ? "alert" : "status"}
       className={`rounded-md border px-3 py-2 text-sm ${toneClass}`}
     >
       {children}
-    </p>
+    </div>
   );
 }
 
