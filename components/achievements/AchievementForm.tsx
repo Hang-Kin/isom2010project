@@ -14,7 +14,7 @@ import {
 } from "@/lib/achievements";
 import { friendlySupabaseError } from "@/lib/supabase/errors";
 import { createClient } from "@/lib/supabase/client";
-import { CATEGORIES, categoryLabel } from "@/lib/types";
+import { CATEGORIES } from "@/lib/categories";
 
 export function AchievementForm({
   mode,
@@ -137,7 +137,7 @@ export function AchievementForm({
     <div className="mx-auto max-w-3xl space-y-6">
       <PageHeader
         title={mode === "create" ? "Add achievement" : "Edit achievement"}
-        lede="Record an award, activity, volunteering role, or scholarship. Evidence can be attached after you save."
+        lede="Record an award, activity, volunteering role, scholarship, internship, or other entry. Evidence can be attached after you save."
       />
 
       {loading ? <StatusMessage tone="info">Loading achievement…</StatusMessage> : null}
@@ -171,8 +171,8 @@ export function AchievementForm({
             >
               <option value="">Select a category</option>
               {CATEGORIES.map((category) => (
-                <option key={category} value={category}>
-                  {categoryLabel(category)}
+                <option key={category.value} value={category.value}>
+                  {category.label}
                 </option>
               ))}
             </select>

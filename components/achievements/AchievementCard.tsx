@@ -13,14 +13,7 @@ import {
 import { deleteEvidence, listEvidence } from "@/lib/evidence";
 import { friendlySupabaseError } from "@/lib/supabase/errors";
 import { createClient } from "@/lib/supabase/client";
-import { categoryLabel, type Category } from "@/lib/types";
-
-const badgeClass: Record<Category, string> = {
-  award: "bg-accent-soft text-accent-strong",
-  activity: "bg-[#e7eef6] text-[#1e3a5f]",
-  volunteering: "bg-warning-soft text-warning",
-  scholarship: "bg-[#f3e8ee] text-[#5c3b4a]",
-};
+import { categoryBadgeClass, categoryLabel } from "@/lib/categories";
 
 export function AchievementCard({
   achievement,
@@ -73,7 +66,7 @@ export function AchievementCard({
         <div className="min-w-0 space-y-2">
           <h2 className="font-serif text-2xl leading-tight">{achievement.title}</h2>
           <span
-            className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${badgeClass[achievement.category]}`}
+            className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${categoryBadgeClass(achievement.category)}`}
           >
             {categoryLabel(achievement.category)}
           </span>

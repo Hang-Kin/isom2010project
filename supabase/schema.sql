@@ -79,7 +79,7 @@ alter table public.achievements add column if not exists updated_at timestamptz 
 alter table public.achievements drop constraint if exists achievements_category_check;
 alter table public.achievements
   add constraint achievements_category_check
-  check (category in ('award', 'activity', 'volunteering', 'scholarship'));
+  check (category in ('award', 'activity', 'volunteering', 'scholarship', 'internship', 'other'));
 
 alter table public.achievements drop constraint if exists achievements_date_order_check;
 alter table public.achievements
