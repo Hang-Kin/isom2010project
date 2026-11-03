@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PdfChecklist } from "@/components/export/PdfChecklist";
+import { PresetPicker } from "@/components/export/PresetPicker";
 import { PageHeader, StatusMessage } from "@/components/ui";
 import { formatAnswer } from "@/lib/answers";
 import { normalizeAchievementWithEvidence } from "@/lib/achievements";
@@ -401,6 +402,19 @@ export function ExportWorkspace() {
             <p className="text-sm text-muted">
               Date window and max items only add warnings. They do not remove entries from the PDF.
             </p>
+            {/* FEAT-1: presets */}
+            <PresetPicker
+              achievements={items}
+              selectedIds={selectedIds}
+              drafts={drafts}
+              disabled={generating}
+              onChange={() => replacePdf(null)}
+              onDraftsChange={setDrafts}
+              onSelectedIdsChange={(ids) => {
+                setSelectedIds(ids);
+                replacePdf(null);
+              }}
+            />
           </section>
 
           <div className="grid items-start gap-6 lg:grid-cols-2">
