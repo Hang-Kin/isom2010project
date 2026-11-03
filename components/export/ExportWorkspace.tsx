@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PdfChecklist } from "@/components/export/PdfChecklist";
+import { useBindPacketTarget } from "@/components/export/PacketBar";
 import { RelevancePanel } from "@/components/export/RelevancePanel";
 import { PageHeader, StatusMessage } from "@/components/ui";
 import { formatAnswer } from "@/lib/answers";
 import { normalizeAchievementWithEvidence } from "@/lib/achievements";
 import { downloadEvidenceBytes } from "@/lib/evidence";
+import { keepExistingIds, type PacketSettings } from "@/lib/packets";
 import { buildEvidencePdf, type SkippedFile } from "@/lib/pdf";
 import { friendlySupabaseError } from "@/lib/supabase/errors";
 import { createClient } from "@/lib/supabase/client";
@@ -188,6 +190,64 @@ export function ExportWorkspace() {
   const selected = selectedIds
     .map((id) => byId.get(id))
     .filter((item): item is AchievementWithEvidence => Boolean(item));
+
+  const answersEdited = selectedIds.some((id) => {
+    if (!(id in drafts)) return false;
+    const achievement = byId.get(id);
+    if (!achievement) return false;
+    return (drafts[id] ?? "") !== formatAnswer(achievement);
+  });
+
+  function applyLoadedPacket(settings: PacketSettings, achievementIds: string[]) {
+    if (loading) {
+      throw new Error("Achievements are still loading. Try again in a moment.");
+    }
+    if (loadError) {
+      throw new Error("Achievements could not be loaded, so this packet cannot be applied.");
+    }
+
+    const { kept, dropped } = keepExistingIds(
+      achievementIds,
+      items.map((item) => item.id),
+    );
+    setApplicationName(settings.applicationName ?? "");
+    setMaxItems(settings.maxItems == null ? "" : String(settings.maxItems));
+    setDateFrom(settings.dateFrom ?? "");
+    setDateTo(settings.dateTo ?? "");
+    setSelectedIds(kept);
+    setDrafts(() => {
+      const next: Record<string, string> = {};
+      for (const id of kept) {
+        const achievement = items.find((item) => item.id === id);
+        if (achievement) next[id] = formatAnswer(achievement);
+      }
+      return next;
+    });
+    setSkipped([]);
+    setGenerateError(null);
+    setReplacedNonLatin(false);
+    setAchievementCount(0);
+    setEvidencePageCount(0);
+    setPdfBytes(0);
+    replacePdf(null);
+    return { dropped, achievementIds: kept };
+  }
+
+  // FEAT-2: packets — PacketBar on the export page reads this target.
+  useBindPacketTarget({
+    getCurrent: () => ({
+      settings: {
+        applicationName,
+        maxItems: max.limit,
+        dateFrom: dateFrom || null,
+        dateTo: dateTo || null,
+      },
+      achievementIds: selectedIds,
+    }),
+    onLoad: (settings, achievementIds) => applyLoadedPacket(settings, achievementIds),
+    hasLocalEdits: () => answersEdited,
+    blockReason: () => max.error ?? windowError,
+  });
 
   function flagsFor(achievement: AchievementWithEvidence, indexInSelection: number) {
     const flags: string[] = [];
