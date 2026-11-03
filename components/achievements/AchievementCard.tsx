@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import EvidenceManager from "@/components/evidence/EvidenceManager";
 import { StatusMessage } from "@/components/ui";
 import {
   evidenceCountLabel,
@@ -9,6 +10,7 @@ import {
   formatHours,
   type AchievementCardModel,
 } from "@/lib/achievements";
+import { deleteEvidence, listEvidence } from "@/lib/evidence";
 import { friendlySupabaseError } from "@/lib/supabase/errors";
 import { createClient } from "@/lib/supabase/client";
 import { categoryLabel, type Category } from "@/lib/types";
@@ -30,13 +32,22 @@ export function AchievementCard({
   const [confirming, setConfirming] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [evidenceCount, setEvidenceCount] = useState(achievement.evidenceCount);
   const dateRange = formatDateRange(achievement.start_date, achievement.end_date);
+  const handleEvidenceCount = useCallback((count: number) => {
+    setEvidenceCount(count);
+  }, []);
 
   async function remove() {
     setPending(true);
     setError(null);
 
     try {
+      const files = await listEvidence(achievement.id);
+      for (const file of files) {
+        await deleteEvidence(file);
+      }
+
       const supabase = createClient();
       const { error: deleteError } = await supabase
         .from("achievements")
@@ -67,7 +78,7 @@ export function AchievementCard({
             {categoryLabel(achievement.category)}
           </span>
         </div>
-        <p className="text-sm text-muted">{evidenceCountLabel(achievement.evidenceCount)}</p>
+        <p className="text-sm text-muted">{evidenceCountLabel(evidenceCount)}</p>
       </div>
 
       <dl className="grid gap-3 text-sm sm:grid-cols-2">
@@ -95,16 +106,18 @@ export function AchievementCard({
         <p className="whitespace-pre-wrap text-sm leading-relaxed">{achievement.description}</p>
       ) : null}
 
+      <EvidenceManager achievementId={achievement.id} onCountChange={handleEvidenceCount} />
+
       {error ? <StatusMessage tone="error">{error}</StatusMessage> : null}
 
       {confirming ? (
         <div className="space-y-3 rounded-md border border-danger/30 bg-danger-soft p-3">
           <p className="text-sm text-danger">
-            Delete this achievement and its evidence records? This cannot be undone.
+            Delete this achievement and its evidence files? This cannot be undone.
           </p>
           <div className="flex flex-wrap gap-2">
             <button type="button" className="btn btn-danger" onClick={remove} disabled={pending}>
-              {pending ? "Deleting…" : "Delete"}
+              {pending ? "Deleting…" : "Delete achievement"}
             </button>
             <button
               type="button"
