@@ -58,7 +58,11 @@ export async function updateSession(request: NextRequest) {
   const isLoggedIn = Boolean(data?.claims);
   const { pathname } = request.nextUrl;
 
-  const needsAuth = pathname === "/dashboard" || pathname.startsWith("/dashboard/");
+  const needsAuth =
+    pathname === "/dashboard" ||
+    pathname.startsWith("/dashboard/") ||
+    pathname === "/profile" ||
+    pathname.startsWith("/profile/");
   const isAuthPage = pathname === "/login" || pathname === "/signup";
 
   if (!isLoggedIn && needsAuth) {

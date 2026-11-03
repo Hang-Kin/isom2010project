@@ -55,7 +55,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           return;
         }
 
-        router.push("/dashboard");
+        router.push("/profile");
         router.refresh();
         return;
       }

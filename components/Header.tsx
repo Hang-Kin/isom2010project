@@ -84,6 +84,9 @@ export function Header() {
           </Link>
           {ready && user ? (
             <>
+              <Link href="/profile" className="btn btn-ghost">
+                Profile
+              </Link>
               {user.email ? (
                 <span
                   className="hidden max-w-56 truncate text-sm text-muted sm:inline"
