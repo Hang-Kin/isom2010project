@@ -341,3 +341,38 @@ create policy "evidence_objects_delete_own"
     bucket_id = 'evidence'
     and (storage.foldername(name))[1] = (select auth.uid())::text
   );
+
+-- ---------------------------------------------------------------------------
+-- Saved packets (FEAT-2). Safe to run again.
+-- Stores a name, settings, and ordered achievement ids. No file bytes or PDFs.
+-- ---------------------------------------------------------------------------
+
+create table if not exists public.packets (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  name text not null check (char_length(btrim(name)) > 0),
+  settings jsonb not null default '{}'::jsonb,
+  achievement_ids uuid[] not null default '{}',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create index if not exists packets_user_updated_idx on public.packets (user_id, updated_at desc);
+alter table public.packets enable row level security;
+
+drop policy if exists "packets_select_own" on public.packets;
+create policy "packets_select_own" on public.packets for select to authenticated using (user_id = (select auth.uid()));
+drop policy if exists "packets_insert_own" on public.packets;
+create policy "packets_insert_own" on public.packets for insert to authenticated with check (user_id = (select auth.uid()));
+drop policy if exists "packets_update_own" on public.packets;
+create policy "packets_update_own" on public.packets for update to authenticated using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
+drop policy if exists "packets_delete_own" on public.packets;
+create policy "packets_delete_own" on public.packets for delete to authenticated using (user_id = (select auth.uid()));
+
+revoke all on table public.packets from anon;
+grant select, insert, update, delete on table public.packets to authenticated;
+
+create or replace function public.packets_set_updated_at() returns trigger language plpgsql set search_path = '' as $$
+begin new.updated_at = pg_catalog.now(); return new; end; $$;
+drop trigger if exists packets_set_updated_at on public.packets;
+create trigger packets_set_updated_at before update on public.packets
+  for each row execute function public.packets_set_updated_at();
