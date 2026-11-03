@@ -1,0 +1,19 @@
+---
+description: Evidence Vault project rules
+alwaysApply: true
+---
+
+Project: "Evidence Vault" — students store awards and activities once with evidence, select entries, and export an evidence PDF plus copy-ready answers for scholarship applications.
+
+Stack: current Next.js App Router, TypeScript (strict), Tailwind CSS, Supabase (Auth + Postgres + Storage), pdf-lib. Dev server port 3001. Session refresh lives in proxy.ts (Next.js 16 renamed middleware.ts).
+
+Rules:
+- Use the App Router only. No Pages Router.
+- Never hardcode keys. Use NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY. Never use or expose the service_role key. Never commit .env.local.
+- Email and password auth only. Do not add Google or other OAuth providers.
+- Profile fields (username, year of study, major, hobbies) are optional. Do not block the dashboard when a profile is empty.
+- Keep it simple: no extra libraries unless asked. No OCR, no AI features, no payments, no email sending.
+- Every user-facing action needs visible loading, success, and error states.
+- Validate inputs (required fields, file type, file size) and show clear error messages.
+- Use sample/fake data only. No real personal documents.
+- All database changes belong in supabase/schema.sql and must be safe to re-run.
