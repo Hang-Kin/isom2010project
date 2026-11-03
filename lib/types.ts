@@ -53,6 +53,7 @@ export type Profile = {
   year_of_study: YearOfStudy | null;
   major: string | null;
   hobbies: string | null;
+  hobby_tags: string[];
   created_at: string;
 };
 
