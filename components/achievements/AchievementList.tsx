@@ -11,7 +11,8 @@ import {
 } from "@/lib/achievements";
 import { friendlySupabaseError } from "@/lib/supabase/errors";
 import { createClient } from "@/lib/supabase/client";
-import { CATEGORIES, categoryLabel, type Category } from "@/lib/types";
+import { CATEGORIES } from "@/lib/categories";
+import type { Category } from "@/lib/types";
 
 export function AchievementList() {
   const searchParams = useSearchParams();
@@ -93,7 +94,7 @@ export function AchievementList() {
     <div className="space-y-6">
       <PageHeader
         title="Achievements"
-        lede="Awards, activities, volunteering, and scholarships you may want to reuse."
+        lede="Awards, activities, volunteering, scholarships, internships, and other entries you may want to reuse."
         actions={
           <Link href="/dashboard/achievements/new" className="btn btn-primary">
             Add achievement
@@ -143,8 +144,8 @@ export function AchievementList() {
           >
             <option value="all">All categories</option>
             {CATEGORIES.map((item) => (
-              <option key={item} value={item}>
-                {categoryLabel(item)}
+              <option key={item.value} value={item.value}>
+                {item.label}
               </option>
             ))}
           </select>
@@ -155,7 +156,7 @@ export function AchievementList() {
 
       {!loading && !error && items.length === 0 ? (
         <div className="card space-y-3">
-          <p>No entries yet. Add your first award or activity.</p>
+          <p>No entries yet. Add your first entry.</p>
           <Link href="/dashboard/achievements/new" className="btn btn-primary">
             Add achievement
           </Link>
