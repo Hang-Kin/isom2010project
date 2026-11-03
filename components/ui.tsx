@@ -26,7 +26,7 @@ export function StatusMessage({
   tone,
   children,
 }: {
-  tone: "error" | "success" | "info";
+  tone: "error" | "success" | "info" | "warning";
   children: ReactNode;
 }) {
   const toneClass =
@@ -34,7 +34,9 @@ export function StatusMessage({
       ? "border-danger/30 bg-danger-soft text-danger"
       : tone === "success"
         ? "border-accent/30 bg-accent-soft text-accent-strong"
-        : "border-line bg-card text-foreground";
+        : tone === "warning"
+          ? "border-warning/40 bg-warning-soft text-warning"
+          : "border-line bg-card text-foreground";
 
   return (
     <div

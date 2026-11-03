@@ -2,7 +2,9 @@ import { friendlySupabaseError } from "@/lib/supabase/errors";
 import {
   CATEGORIES,
   type Achievement,
+  type AchievementWithEvidence,
   type Category,
+  type EvidenceFile,
 } from "@/lib/types";
 
 export type AchievementCardModel = Achievement & {
@@ -78,6 +80,40 @@ export function draftFromAchievement(achievement: Achievement): AchievementDraft
     endDate: achievement.end_date ?? "",
     hours: achievement.hours === null ? "" : String(achievement.hours),
     description: achievement.description ?? "",
+  };
+}
+
+export function normalizeAchievementWithEvidence(
+  row: AchievementRow & {
+    evidence_files?: Array<EvidenceFile | { id: string }> | null;
+  },
+): AchievementWithEvidence | null {
+  const card = normalizeAchievement(row);
+  if (!card) return null;
+
+  const files = (row.evidence_files ?? []).filter((file): file is EvidenceFile => {
+    return "file_path" in file && "file_name" in file;
+  });
+
+  files.sort((left, right) => left.created_at.localeCompare(right.created_at));
+
+  return {
+    id: card.id,
+    user_id: card.user_id,
+    title: card.title,
+    category: card.category,
+    organizer: card.organizer,
+    role: card.role,
+    start_date: card.start_date,
+    end_date: card.end_date,
+    hours: card.hours,
+    description: card.description,
+    created_at: card.created_at,
+    updated_at: card.updated_at,
+    evidence_files: files.map((file) => ({
+      ...file,
+      file_size: file.file_size === null ? null : Number(file.file_size),
+    })),
   };
 }
 
