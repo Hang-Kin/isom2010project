@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PdfChecklist } from "@/components/export/PdfChecklist";
 import { useBindPacketTarget } from "@/components/export/PacketBar";
+import { RelevancePanel } from "@/components/export/RelevancePanel";
 import { PageHeader, StatusMessage } from "@/components/ui";
 import { formatAnswer } from "@/lib/answers";
 import { normalizeAchievementWithEvidence } from "@/lib/achievements";
@@ -16,6 +17,9 @@ import {
   categoryLabel,
   type AchievementWithEvidence,
 } from "@/lib/types";
+// FEAT-3: counter
+import { AnswerLimitControl, type AnswerLimitValue } from "@/components/export/AnswerLimitControl";
+import { AnswerCountSummary, CopyLimitWarning, WordCounter } from "@/components/export/WordCounter";
 
 function parseMaxItems(value: string): { limit: number | null; error: string | null } {
   const trimmed = value.trim();
@@ -76,6 +80,8 @@ export function ExportWorkspace() {
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [copyError, setCopyError] = useState<string | null>(null);
+  // FEAT-3: counter
+  const [answerLimit, setAnswerLimit] = useState<AnswerLimitValue>({ limit: null, unit: "words" });
   const [generating, setGenerating] = useState(false);
   const [generateError, setGenerateError] = useState<string | null>(null);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
@@ -463,6 +469,16 @@ export function ExportWorkspace() {
             </p>
           </section>
 
+          {/* FEAT-6: relevance */}
+          <RelevancePanel
+            achievements={items}
+            selectedIds={selectedIds}
+            onSelect={(ids) => {
+              setSelectedIds(ids);
+              replacePdf(null);
+            }}
+          />
+
           <div className="grid items-start gap-6 lg:grid-cols-2">
             <section className="card space-y-4">
               <h2 className="font-serif text-2xl">Entries</h2>
@@ -547,22 +563,33 @@ export function ExportWorkspace() {
                 )}
               </section>
 
+              {/* FEAT-3: counter */}
+              <AnswerLimitControl value={answerLimit} onChange={setAnswerLimit} />
+
               <section className="card space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h2 className="font-serif text-2xl">Copy-ready answers</h2>
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() =>
-                      void copyText(
-                        "all",
-                        selected.map((achievement) => answerFor(achievement.id)).join("\n\n"),
-                      )
-                    }
-                    disabled={selected.length === 0}
-                  >
-                    {copiedId === "all" ? "Copied" : "Copy all"}
-                  </button>
+                  <span className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() =>
+                        void copyText(
+                          "all",
+                          selected.map((achievement) => answerFor(achievement.id)).join("\n\n"),
+                        )
+                      }
+                      disabled={selected.length === 0}
+                    >
+                      {copiedId === "all" ? "Copied" : "Copy all"}
+                    </button>
+                    {/* FEAT-3: counter */}
+                    <CopyLimitWarning
+                      texts={selected.map((achievement) => answerFor(achievement.id))}
+                      limit={answerLimit.limit}
+                      unit={answerLimit.unit}
+                    />
+                  </span>
                 </div>
                 {selected.length === 0 ? (
                   <p className="text-sm text-muted">Answers appear here in the selected order.</p>
@@ -573,13 +600,21 @@ export function ExportWorkspace() {
                         <label className="text-sm font-semibold" htmlFor={`answer-${achievement.id}`}>
                           {achievement.title}
                         </label>
-                        <button
-                          type="button"
-                          className="btn btn-secondary"
-                          onClick={() => void copyText(achievement.id, answerFor(achievement.id))}
-                        >
-                          {copiedId === achievement.id ? "Copied" : "Copy"}
-                        </button>
+                        <span className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            className="btn btn-secondary"
+                            onClick={() => void copyText(achievement.id, answerFor(achievement.id))}
+                          >
+                            {copiedId === achievement.id ? "Copied" : "Copy"}
+                          </button>
+                          {/* FEAT-3: counter */}
+                          <CopyLimitWarning
+                            texts={[answerFor(achievement.id)]}
+                            limit={answerLimit.limit}
+                            unit={answerLimit.unit}
+                          />
+                        </span>
                       </div>
                       <textarea
                         id={`answer-${achievement.id}`}
@@ -592,9 +627,21 @@ export function ExportWorkspace() {
                           }))
                         }
                       />
+                      {/* FEAT-3: counter */}
+                      <WordCounter
+                        text={answerFor(achievement.id)}
+                        limit={answerLimit.limit}
+                        unit={answerLimit.unit}
+                      />
                     </div>
                   ))
                 )}
+                {/* FEAT-3: counter */}
+                <AnswerCountSummary
+                  texts={selected.map((achievement) => answerFor(achievement.id))}
+                  limit={answerLimit.limit}
+                  unit={answerLimit.unit}
+                />
                 {copyError ? <StatusMessage tone="error">{copyError}</StatusMessage> : null}
               </section>
 
