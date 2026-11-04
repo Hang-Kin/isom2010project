@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { DashboardNav } from "@/components/DashboardNav";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 
 export const metadata: Metadata = {
@@ -6,5 +7,10 @@ export const metadata: Metadata = {
 };
 
 export default function ProfilePage() {
-  return <ProfileForm />;
+  return (
+    <div className="space-y-8">
+      <DashboardNav />
+      <ProfileForm />
+    </div>
+  );
 }

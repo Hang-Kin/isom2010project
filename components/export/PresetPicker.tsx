@@ -52,6 +52,7 @@ export function PresetPicker({
   onDraftsChange,
   onSelectedIdsChange,
   disabled = false,
+  revision = 0,
 }: {
   value?: PresetChoice;
   onChange?: (value: PresetChoice) => void;
@@ -65,10 +66,18 @@ export function PresetPicker({
   ) => void;
   onSelectedIdsChange?: (ids: string[]) => void;
   disabled?: boolean;
+  /** Bumps when a saved packet replaces the current choice, so a pending switch is dropped. */
+  revision?: number;
 }) {
   const [internal, setInternal] = useState<PresetChoice>(() => getActiveChoice());
   const [pending, setPending] = useState<PresetChoice | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
+  const [seenRevision, setSeenRevision] = useState(revision);
+  if (seenRevision !== revision) {
+    setSeenRevision(revision);
+    setPending(null);
+    setNotice(null);
+  }
   const choice = value ?? internal;
   const baselineRef = useRef<Record<string, string>>({});
   const applyRef = useRef<(next: PresetChoice, replaceAll: boolean) => void>(() => {});
@@ -226,7 +235,7 @@ export function PresetPicker({
   const hint = suggestion(choice.preset);
 
   return (
-    <div className="space-y-4 border-t border-line pt-4">
+    <div className="space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <h2 className="font-serif text-2xl">Application preset</h2>
         <button
