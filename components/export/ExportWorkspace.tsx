@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PdfChecklist } from "@/components/export/PdfChecklist";
+import { PortfolioBalance } from "@/components/export/PortfolioBalance"; // FEAT-11
+import { PostExportFeedback } from "@/components/export/PostExportFeedback"; // FEAT-11
 import { PresetPicker } from "@/components/export/PresetPicker";
 import { useBindPacketTarget } from "@/components/export/PacketBar";
 import { RelevancePanel } from "@/components/export/RelevancePanel";
@@ -612,6 +614,9 @@ export function ExportWorkspace() {
               </section>
           </div>
 
+          {/* FEAT-11 */}
+          <PortfolioBalance entries={selected} />
+
               {/* FEAT-3: counter */}
               <AnswerLimitControl
                 key={presetRevision}
@@ -737,6 +742,8 @@ export function ExportWorkspace() {
                       src={pdfUrl}
                       className="h-[480px] w-full rounded-md border border-line bg-white"
                     />
+                    {/* FEAT-11 */}
+                    <PostExportFeedback key={pdfUrl} generationId={pdfUrl} />
                     <div className="flex flex-wrap gap-2">
                       <button type="button" className="btn btn-primary" onClick={downloadPdf}>
                         Download

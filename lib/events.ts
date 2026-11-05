@@ -20,8 +20,11 @@ export type EventName =
   | "sensitive_warning_shown"
   | "sensitive_warning_confirmed"
   | "sensitive_warning_cancelled"
-  | "verifier_added"
-  // FEAT-11: append feedback_submitted, suggestion_accepted, suggestion_dismissed, onboarding_completed.
+  | "verifier_added" 
+  | "feedback_submitted"
+  | "suggestion_accepted"
+  | "suggestion_dismissed"
+  | "onboarding_completed"
   ;
 
 type EventProps = Record<string, string | number | boolean | null>;
