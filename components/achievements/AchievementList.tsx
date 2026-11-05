@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { AchievementCard } from "@/components/achievements/AchievementCard";
+import { useUndoDelete } from "@/components/ui/UndoToast"; // FEAT-12
 import { PageHeader, StatusMessage } from "@/components/ui";
 import {
   normalizeAchievement,
@@ -93,6 +94,7 @@ export function AchievementList() {
 
   return (
     <div className="space-y-6">
+      {useUndoDelete(items, setItems) /* FEAT-12 */}
       <PageHeader
         title="Achievements"
         lede="Awards, activities, volunteering, scholarships, internships, and other entries you may want to reuse."

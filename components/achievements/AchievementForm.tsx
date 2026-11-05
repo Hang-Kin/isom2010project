@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Field, PageHeader, StatusMessage } from "@/components/ui";
+import { useFormDraft } from "@/lib/form-draft"; // FEAT-12
 import {
   achievementSaveError,
   draftFromAchievement,
@@ -168,6 +169,7 @@ export function AchievementForm({
         title={mode === "create" ? "Add achievement" : "Edit achievement"}
         lede="Record an award, activity, volunteering role, scholarship, internship, or other entry. Evidence can be attached after you save."
       />
+      {useFormDraft(mode === "create" ? "achievement-new" : null, draft, setDraft) /* FEAT-12 */}
 
       {loading ? <StatusMessage tone="info">Loading achievement…</StatusMessage> : null}
       {formError ? <StatusMessage tone="error">{formError}</StatusMessage> : null}
