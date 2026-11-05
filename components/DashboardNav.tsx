@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ImportNavLink } from "@/components/import/ImportNavLink";
+import { InsightsNavLink } from "@/components/insights/InsightsNavLink";
 
 const links = [
   { href: "/dashboard/achievements", label: "Achievements" },
@@ -56,6 +57,8 @@ export function DashboardNav() {
       >
         Profile
       </Link>
+      {/* FEAT-10: insights */}
+      <InsightsNavLink />
     </nav>
   );
 }
