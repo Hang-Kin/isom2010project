@@ -1,5 +1,6 @@
 import { CATEGORIES } from "@/lib/categories";
 import { friendlySupabaseError } from "@/lib/supabase/errors";
+import { verifierFieldsFromRow } from "@/lib/verifier"; // FEAT-9
 import {
   type Achievement,
   type AchievementWithEvidence,
@@ -110,6 +111,7 @@ export function normalizeAchievementWithEvidence(
     description: card.description,
     created_at: card.created_at,
     updated_at: card.updated_at,
+    ...verifierFieldsFromRow(card), // FEAT-9
     evidence_files: files.map((file) => ({
       ...file,
       file_size: file.file_size === null ? null : Number(file.file_size),
@@ -138,6 +140,7 @@ export function normalizeAchievement(row: AchievementRow): AchievementCardModel 
     description: row.description,
     created_at: row.created_at,
     updated_at: row.updated_at,
+    ...verifierFieldsFromRow(row), // FEAT-9
     evidenceCount: row.evidence_files?.length ?? 0,
   };
 }
@@ -207,6 +210,9 @@ export function achievementSaveError(error: { message?: string; code?: string })
   }
   if (/achievements_hours_check/i.test(message)) {
     return "Hours cannot be negative.";
+  }
+  if (/achievements_verifier_lengths_check/i.test(message)) {
+    return "Verifier name and title must be 80 characters or fewer, and contact must be 120 characters or fewer.";
   }
   if (/achievements_category_check/i.test(message)) {
     return "Choose a category.";

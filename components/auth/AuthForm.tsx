@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { Field, StatusMessage } from "@/components/ui";
 import { createClient } from "@/lib/supabase/client";
+import { trackEvent } from "@/lib/events"; // FEAT-7
 
 export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const router = useRouter();
@@ -75,6 +76,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         return;
       }
 
+      trackEvent("login"); // FEAT-7
       router.push("/dashboard");
       router.refresh();
     } catch (cause) {

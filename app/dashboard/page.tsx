@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { FirstWinChecklist } from "@/components/dashboard/FirstWinChecklist"; // FEAT-11
 import { Greeting } from "@/components/dashboard/Greeting";
+import { NeedsAttention } from "@/components/dashboard/NeedsAttention"; // FEAT-12
 import { displayName } from "@/lib/greetings";
 import { createClient } from "@/lib/supabase/server";
 
@@ -16,6 +17,7 @@ export default async function DashboardPage() {
       <Greeting name={await loadDisplayName()} />
       {/* FEAT-11 */}
       <FirstWinChecklist />
+      <NeedsAttention /> {/* FEAT-12 */}
     </>
   );
 }

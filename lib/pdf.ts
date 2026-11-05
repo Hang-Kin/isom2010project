@@ -633,6 +633,22 @@ class Layout {
     this.drawParagraph("Description", { font: "bold" });
     this.gap(2);
     this.drawParagraph(provided(achievement.description));
+    // FEAT-9: verification block. Skipped unless the student includes a verifier.
+    if (achievement.verifier_in_pdf) {
+      const name = achievement.verifier_name?.trim() ?? "";
+      const title = achievement.verifier_title?.trim() ?? "";
+      const contact = achievement.verifier_contact?.trim() ?? "";
+      const who = [name, title].filter(Boolean).join(", ");
+      const identity = who && contact ? `${who} - ${contact}` : who || contact;
+      this.gap(10);
+      this.drawParagraph("Verification", { font: "bold" });
+      this.gap(2);
+      this.drawParagraph(identity ? `Verifier: ${identity}` : "Verifier:");
+      this.drawParagraph("Provided by the applicant; not verified by Evidence Vault.", {
+        size: 10,
+        color: MUTED,
+      });
+    }
     this.gap(10);
     this.drawParagraph("Supporting evidence", { font: "bold" });
     this.gap(2);
