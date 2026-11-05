@@ -25,6 +25,7 @@ import {
   FIELD_LABELS,
   IMPORT_FIELDS,
 } from "@/lib/import";
+import { trackEvent } from "@/lib/events"; // FEAT-7
 
 type Phase = "upload" | "map" | "preview" | "importing" | "result";
 
@@ -191,6 +192,7 @@ export function ImportWizard() {
         failed: [...parts.failed, ...outcome.failed],
       });
       setPhase("result");
+      trackEvent("import_completed", { imported: outcome.imported, skipped: parts.skipped.length }); // FEAT-7
     } catch (cause) {
       if (runId.current !== id) return;
       setImportError(cause instanceof Error ? cause.message : "Could not import these rows.");

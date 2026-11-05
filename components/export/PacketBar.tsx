@@ -23,6 +23,7 @@ import {
   type PacketSnapshot,
   type PacketTargetHandlers,
 } from "@/lib/packets";
+import { trackEvent } from "@/lib/events"; // FEAT-7
 
 type PendingAction = "save" | "create" | "duplicate" | "delete" | "load";
 
@@ -166,6 +167,7 @@ export function PacketBar({ getCurrent: getCurrentProp, onLoad: onLoadProp }: Pa
       setNaming(false);
       setDropNotice(removedEntryNotice(applied.dropped));
       setStatus({ tone: "success", text: `Loaded "${packet.name}".` });
+      trackEvent("packet_loaded"); // FEAT-7
     } catch (error) {
       setStatus({ tone: "error", text: messageOf(error, "Could not load that packet.") });
     } finally {
@@ -240,6 +242,7 @@ export function PacketBar({ getCurrent: getCurrentProp, onLoad: onLoadProp }: Pa
       setBaseline(current);
       remember(saved);
       setStatus({ tone: "success", text: "Saved." });
+      trackEvent("packet_saved"); // FEAT-7
     } catch (error) {
       setStatus({ tone: "error", text: messageOf(error, "Could not save this packet.") });
     } finally {
@@ -293,6 +296,7 @@ export function PacketBar({ getCurrent: getCurrentProp, onLoad: onLoadProp }: Pa
       setNaming(false);
       setDraftName("");
       setStatus({ tone: "success", text: `Saved as "${saved.name}".` });
+      trackEvent("packet_saved"); // FEAT-7
     } catch (error) {
       setStatus({ tone: "error", text: messageOf(error, "Could not save this packet.") });
     } finally {
