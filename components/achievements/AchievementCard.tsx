@@ -10,10 +10,12 @@ import {
   formatHours,
   type AchievementCardModel,
 } from "@/lib/achievements";
+import { deferAchievementDelete, DuplicateAchievementButton } from "@/components/ui/UndoToast"; // FEAT-12
 import { deleteEvidence, listEvidence } from "@/lib/evidence";
 import { friendlySupabaseError } from "@/lib/supabase/errors";
 import { createClient } from "@/lib/supabase/client";
 import { categoryBadgeClass, categoryLabel } from "@/lib/categories";
+import { VerifierBadge } from "@/components/achievements/VerifierBadge"; // FEAT-9
 
 export function AchievementCard({
   achievement,
@@ -32,6 +34,7 @@ export function AchievementCard({
   }, []);
 
   async function remove() {
+    if (deferAchievementDelete(achievement)) return; // FEAT-12
     setPending(true);
     setError(null);
 
@@ -70,6 +73,8 @@ export function AchievementCard({
           >
             {categoryLabel(achievement.category)}
           </span>
+          {/* FEAT-9 */}
+          <VerifierBadge achievement={achievement} />
         </div>
         <p className="text-sm text-muted">{evidenceCountLabel(evidenceCount)}</p>
       </div>
@@ -127,6 +132,7 @@ export function AchievementCard({
           <Link href={`/dashboard/achievements/${achievement.id}/edit`} className="btn btn-secondary">
             Edit
           </Link>
+          <DuplicateAchievementButton achievement={achievement} /> {/* FEAT-12 */}
           <button type="button" className="btn btn-ghost" onClick={() => setConfirming(true)}>
             Delete
           </button>

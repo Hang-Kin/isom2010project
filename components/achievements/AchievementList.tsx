@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { AchievementCard } from "@/components/achievements/AchievementCard";
+import { useUndoDelete } from "@/components/ui/UndoToast"; // FEAT-12
 import { PageHeader, StatusMessage } from "@/components/ui";
 import {
   normalizeAchievement,
@@ -42,7 +43,8 @@ export function AchievementList() {
         const { data, error: queryError } = await supabase
           .from("achievements")
           .select(
-            "id, user_id, title, category, organizer, role, start_date, end_date, hours, description, created_at, updated_at, evidence_files(id)",
+            // FEAT-9: verifier columns
+            "id, user_id, title, category, organizer, role, start_date, end_date, hours, description, created_at, updated_at, verifier_name, verifier_title, verifier_contact, verifier_in_pdf, evidence_files(id)",
           )
           .order("created_at", { ascending: false });
 
@@ -92,6 +94,7 @@ export function AchievementList() {
 
   return (
     <div className="space-y-6">
+      {useUndoDelete(items, setItems) /* FEAT-12 */}
       <PageHeader
         title="Achievements"
         lede="Awards, activities, volunteering, scholarships, internships, and other entries you may want to reuse."
