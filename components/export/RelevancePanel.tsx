@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { SuggestionFeedback } from "@/components/export/SuggestionFeedback"; // FEAT-11
 import { StatusMessage } from "@/components/ui";
 import { categoryBadgeClass, categoryLabel } from "@/lib/categories";
 import {
@@ -378,6 +379,13 @@ export function RelevancePanel({
 
       {ranked ? (
         <div className="space-y-4">
+          {/* FEAT-11 */}
+          <SuggestionFeedback
+            items={matched}
+            keywords={activeKeywords}
+            disabled={busy !== null}
+            onAdd={addEntry}
+          />
           <div className="flex flex-wrap items-end gap-3">
             <label className="space-y-1.5 text-sm font-semibold" htmlFor="relevance-top-n">
               Select top
