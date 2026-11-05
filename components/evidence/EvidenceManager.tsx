@@ -11,7 +11,6 @@ import {
   listEvidence,
   uploadEvidence,
 } from "@/lib/evidence";
-import { trackEvent } from "@/lib/events"; // FEAT-8
 import { checkFileNameSensitivity } from "@/lib/sensitive"; // FEAT-8
 import type { EvidenceFile } from "@/lib/types";
 import { trackEvent } from "@/lib/events"; // FEAT-7

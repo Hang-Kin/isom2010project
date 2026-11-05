@@ -13,7 +13,6 @@ import {
   validateAchievement,
   type AchievementDraft,
 } from "@/lib/achievements";
-import { trackEvent } from "@/lib/events";
 import { friendlySupabaseError } from "@/lib/supabase/errors";
 import { createClient } from "@/lib/supabase/client";
 import { trackEvent } from "@/lib/events"; // FEAT-7
