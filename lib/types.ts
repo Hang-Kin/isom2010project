@@ -17,6 +17,10 @@ export type Achievement = {
   end_date: string | null;
   hours: number | null;
   description: string | null;
+  verifier_name: string | null;
+  verifier_title: string | null;
+  verifier_contact: string | null;
+  verifier_in_pdf: boolean;
   created_at: string;
   updated_at: string;
 };

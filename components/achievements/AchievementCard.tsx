@@ -14,6 +14,7 @@ import { deleteEvidence, listEvidence } from "@/lib/evidence";
 import { friendlySupabaseError } from "@/lib/supabase/errors";
 import { createClient } from "@/lib/supabase/client";
 import { categoryBadgeClass, categoryLabel } from "@/lib/categories";
+import { VerifierBadge } from "@/components/achievements/VerifierBadge"; // FEAT-9
 
 export function AchievementCard({
   achievement,
@@ -70,6 +71,8 @@ export function AchievementCard({
           >
             {categoryLabel(achievement.category)}
           </span>
+          {/* FEAT-9 */}
+          <VerifierBadge achievement={achievement} />
         </div>
         <p className="text-sm text-muted">{evidenceCountLabel(evidenceCount)}</p>
       </div>

@@ -42,7 +42,8 @@ export function AchievementList() {
         const { data, error: queryError } = await supabase
           .from("achievements")
           .select(
-            "id, user_id, title, category, organizer, role, start_date, end_date, hours, description, created_at, updated_at, evidence_files(id)",
+            // FEAT-9: verifier columns
+            "id, user_id, title, category, organizer, role, start_date, end_date, hours, description, created_at, updated_at, verifier_name, verifier_title, verifier_contact, verifier_in_pdf, evidence_files(id)",
           )
           .order("created_at", { ascending: false });
 

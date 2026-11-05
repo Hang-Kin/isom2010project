@@ -19,6 +19,7 @@ import {
   categoryLabel,
   type AchievementWithEvidence,
 } from "@/lib/types";
+import { VerifierBadge } from "@/components/achievements/VerifierBadge"; // FEAT-9
 // FEAT-3: counter
 import { AnswerLimitControl, type AnswerLimitValue } from "@/components/export/AnswerLimitControl";
 import { AnswerCountSummary, CopyLimitWarning, WordCounter } from "@/components/export/WordCounter";
@@ -130,7 +131,8 @@ export function ExportWorkspace() {
           supabase
             .from("achievements")
             .select(
-              "id, user_id, title, category, organizer, role, start_date, end_date, hours, description, created_at, updated_at, evidence_files(id, achievement_id, user_id, file_name, file_path, file_type, file_size, created_at)",
+              // FEAT-9: verifier columns
+              "id, user_id, title, category, organizer, role, start_date, end_date, hours, description, created_at, updated_at, verifier_name, verifier_title, verifier_contact, verifier_in_pdf, evidence_files(id, achievement_id, user_id, file_name, file_path, file_type, file_size, created_at)",
             )
             .order("created_at", { ascending: false }),
           supabase
@@ -541,6 +543,8 @@ export function ExportWorkspace() {
                               ))}
                             </span>
                           ) : null}
+                          {/* FEAT-9 */}
+                          <VerifierBadge achievement={achievement} selected={checked} />
                         </span>
                       </label>
                     </li>
