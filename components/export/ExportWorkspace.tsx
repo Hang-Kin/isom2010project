@@ -13,7 +13,7 @@ import { downloadEvidenceBytes } from "@/lib/evidence";
 import { keepExistingIds, normalizePacketSettings, type PacketSettings } from "@/lib/packets";
 import { buildEvidencePdf, type SkippedFile } from "@/lib/pdf";
 import { getActiveChoice, publishPresetChoice, type PresetChoice } from "@/lib/presets";
-import { friendlySupabaseError } from "@/lib/supabase/errors";
+import { formatLayeredError, withLayer } from "@/lib/supabase/errors"; // FEAT-12
 import { createClient } from "@/lib/supabase/client";
 import {
   categoryLabel,
@@ -27,10 +27,10 @@ function parseMaxItems(value: string): { limit: number | null; error: string | n
   const trimmed = value.trim();
   if (!trimmed) return { limit: null, error: null };
   if (!/^\d+$/.test(trimmed)) {
-    return { limit: null, error: "Max items must be a whole number." };
+    return { limit: null, error: withLayer("Max items must be a whole number", "application") };
   }
   const limit = Number(trimmed);
-  if (limit < 1) return { limit: null, error: "Max items must be at least 1." };
+  if (limit < 1) return { limit: null, error: withLayer("Max items must be at least 1", "application") };
   return { limit, error: null };
 }
 
@@ -120,7 +120,12 @@ export function ExportWorkspace() {
         const { data: userData, error: userError } = await supabase.auth.getUser();
         if (!active) return;
         if (userError || !userData.user) {
-          setLoadError(userError?.message || "You need to log in before exporting.");
+          setLoadError(
+            formatLayeredError(
+              "Could not load achievements",
+              userError ?? { message: "Unauthorized", status: 401 },
+            ),
+          );
           return;
         }
 
@@ -143,15 +148,13 @@ export function ExportWorkspace() {
         if (!active) return;
 
         if (achievementResult.error) {
-          setLoadError(
-            friendlySupabaseError(achievementResult.error, "Could not load achievements."),
-          );
+          setLoadError(formatLayeredError("Could not load achievements", achievementResult.error));
           return;
         }
 
         if (profileResult.error) {
           setProfileWarning(
-            friendlySupabaseError(profileResult.error, "Could not load your profile."),
+            formatLayeredError("Could not load your profile", profileResult.error),
           );
         } else {
           setUsername(profileResult.data?.username ?? "");
@@ -173,7 +176,7 @@ export function ExportWorkspace() {
         });
       } catch (cause) {
         if (!active) return;
-        setLoadError(cause instanceof Error ? cause.message : "Could not load achievements.");
+        setLoadError(formatLayeredError("Could not load achievements", cause));
       } finally {
         if (active) setLoading(false);
       }
@@ -189,7 +192,7 @@ export function ExportWorkspace() {
   const max = parseMaxItems(maxItems);
   const windowError =
     dateFrom && dateTo && dateTo < dateFrom
-      ? "The end of the date window cannot be before the start."
+      ? withLayer("The end of the date window cannot be before the start", "application")
       : null;
   const selected = selectedIds
     .map((id) => byId.get(id))
@@ -325,8 +328,8 @@ export function ExportWorkspace() {
       copiedTimer.current = setTimeout(() => {
         setCopiedId((current) => (current === id ? null : current));
       }, 2000);
-    } catch {
-      setCopyError("Could not copy to the clipboard.");
+    } catch (cause) {
+      setCopyError(formatLayeredError("Could not copy to the clipboard", cause));
     }
   }
 
@@ -351,7 +354,10 @@ export function ExportWorkspace() {
           } catch (cause) {
             files.push({
               file,
-              error: cause instanceof Error ? cause.message : "The file could not be downloaded.",
+              error:
+                cause instanceof Error
+                  ? cause.message
+                  : formatLayeredError("Could not download this file", cause),
             });
           }
         }
@@ -377,7 +383,7 @@ export function ExportWorkspace() {
       setSkipped(result.skipped);
       setReplacedNonLatin(result.replacedNonLatin);
     } catch (cause) {
-      setGenerateError(cause instanceof Error ? cause.message : "Could not generate the PDF.");
+      setGenerateError(formatLayeredError("Could not generate the PDF", cause));
     } finally {
       setGenerating(false);
     }

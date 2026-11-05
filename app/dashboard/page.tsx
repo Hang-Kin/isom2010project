@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Greeting } from "@/components/dashboard/Greeting";
+import { NeedsAttention } from "@/components/dashboard/NeedsAttention"; // FEAT-12
 import { displayName } from "@/lib/greetings";
 import { createClient } from "@/lib/supabase/server";
 
@@ -10,7 +11,12 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  return <Greeting name={await loadDisplayName()} />;
+  return (
+    <>
+      <Greeting name={await loadDisplayName()} />
+      <NeedsAttention /> {/* FEAT-12 */}
+    </>
+  );
 }
 
 async function loadDisplayName(): Promise<string | null> {
