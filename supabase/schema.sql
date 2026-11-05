@@ -376,3 +376,19 @@ begin new.updated_at = pg_catalog.now(); return new; end; $$;
 drop trigger if exists packets_set_updated_at on public.packets;
 create trigger packets_set_updated_at before update on public.packets
   for each row execute function public.packets_set_updated_at();
+
+-- ---------------------------------------------------------------------------
+-- Optional verifier per achievement (FEAT-9). Safe to run again.
+-- Existing achievements RLS policies already cover these columns.
+-- ---------------------------------------------------------------------------
+
+alter table public.achievements add column if not exists verifier_name text;
+alter table public.achievements add column if not exists verifier_title text;
+alter table public.achievements add column if not exists verifier_contact text;
+alter table public.achievements add column if not exists verifier_in_pdf boolean not null default false;
+
+alter table public.achievements drop constraint if exists achievements_verifier_lengths_check;
+alter table public.achievements add constraint achievements_verifier_lengths_check check (
+  coalesce(char_length(verifier_name),0) <= 80 and
+  coalesce(char_length(verifier_title),0) <= 80 and
+  coalesce(char_length(verifier_contact),0) <= 120);

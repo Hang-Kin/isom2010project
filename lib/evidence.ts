@@ -1,4 +1,5 @@
-import { friendlySupabaseError } from "@/lib/supabase/errors";
+import { compressImageIfNeeded } from "@/lib/image-compress";
+import { formatLayeredError, withLayer } from "@/lib/supabase/errors";
 import { createClient } from "@/lib/supabase/client";
 import type { EvidenceFile } from "@/lib/types";
 
@@ -85,32 +86,46 @@ function normalizeEvidence(row: EvidenceRow): EvidenceFile {
   };
 }
 
-function readableUploadError(message: string, fileName: string): string {
-  if (/failed to fetch|network|load failed/i.test(message)) {
-    return `Could not upload ${fileName}. Check your connection and try again.`;
+function presentEvidenceError(action: string, error: unknown): string {
+  const text = error instanceof Error ? error.message : "";
+  if (/larger than 5 MB/i.test(text)) {
+    return withLayer("This file is larger than 5 MB. Choose a smaller PDF, JPEG, or PNG", "application");
   }
-  if (/size|too large|exceeded/i.test(message)) return sizeError(fileName).message;
-  if (/mime|content.type|not allowed/i.test(message)) return typeError(fileName).message;
-  return message || `Could not upload ${fileName}.`;
+  if (/is empty/i.test(text)) {
+    return withLayer("This file is empty. Choose a PDF, JPEG, or PNG that has content", "application");
+  }
+  if (/is not allowed/i.test(text)) {
+    return withLayer("Only PDF, JPEG, and PNG files can be uploaded", "application");
+  }
+  return formatLayeredError(action, error);
 }
 
 export async function uploadEvidence(achievementId: string, file: File): Promise<EvidenceFile> {
-  const mime = assertEvidenceFile(file);
+  file = await compressImageIfNeeded(file); // FEAT-12
+  let mime: string;
+  try {
+    mime = assertEvidenceFile(file);
+  } catch (cause) {
+    throw new Error(presentEvidenceError("Could not upload", cause));
+  }
   const supabase = createClient();
   const { data: userData, error: userError } = await supabase.auth.getUser();
 
   if (userError || !userData.user) {
-    throw new Error(userError?.message || "You need to log in before uploading evidence.");
+    throw new Error(
+      formatLayeredError("Could not upload", userError ?? { message: "Unauthorized", status: 401 }),
+    );
   }
 
   const path = `${userData.user.id}/${achievementId}/${crypto.randomUUID()}-${sanitizeFileName(file.name)}`;
-  const { error: uploadError } = await supabase.storage.from(BUCKET).upload(path, file, {
-    upsert: false,
-    contentType: mime,
-  });
-
-  if (uploadError) {
-    throw new Error(readableUploadError(uploadError.message, file.name));
+  try {
+    const uploaded = await supabase.storage.from(BUCKET).upload(path, file, {
+      upsert: false,
+      contentType: mime,
+    });
+    if (uploaded.error) throw uploaded.error;
+  } catch (cause) {
+    throw new Error(formatLayeredError("Could not upload", cause));
   }
 
   const { data, error: insertError } = await supabase
@@ -127,14 +142,13 @@ export async function uploadEvidence(achievementId: string, file: File): Promise
     .single();
 
   if (insertError || !data) {
-    const { error: removeError } = await supabase.storage.from(BUCKET).remove([path]);
-    const reason = insertError
-      ? friendlySupabaseError(insertError, "The file uploaded, but its record could not be saved.")
-      : "The file uploaded, but its record could not be saved.";
-    if (removeError) {
-      throw new Error(`${reason} The uploaded file could not be removed either. ${removeError.message}`);
-    }
-    throw new Error(`${reason} The upload was removed.`);
+    await supabase.storage.from(BUCKET).remove([path]);
+    throw new Error(
+      formatLayeredError(
+        "Could not save the uploaded file",
+        insertError ?? { message: "The file record was not saved.", status: 500 },
+      ),
+    );
   }
 
   return normalizeEvidence(data);
@@ -148,7 +162,7 @@ export async function listEvidence(achievementId: string): Promise<EvidenceFile[
     .eq("achievement_id", achievementId)
     .order("created_at", { ascending: true });
 
-  if (error) throw new Error(friendlySupabaseError(error, "Could not load evidence files."));
+  if (error) throw new Error(formatLayeredError("Could not load evidence files", error));
   return (data ?? []).map((row) => normalizeEvidence(row));
 }
 
@@ -156,19 +170,12 @@ export async function deleteEvidence(evidence: EvidenceFile): Promise<void> {
   const supabase = createClient();
   const { error: storageError } = await supabase.storage.from(BUCKET).remove([evidence.file_path]);
 
-  if (storageError && !/not found|does not exist/i.test(storageError.message)) {
-    throw new Error(`Could not delete ${evidence.file_name}. ${storageError.message}`);
+  if (storageError && !/not found|does not exist/i.test(storageError.message ?? "")) {
+    throw new Error(formatLayeredError("Could not delete this file", storageError));
   }
 
   const { error } = await supabase.from("evidence_files").delete().eq("id", evidence.id);
-  if (error) {
-    throw new Error(
-      friendlySupabaseError(
-        error,
-        `Removed ${evidence.file_name} from storage, but the record could not be deleted. Try again.`,
-      ),
-    );
-  }
+  if (error) throw new Error(formatLayeredError("Could not delete this file", error));
 }
 
 export async function getEvidenceSignedUrl(path: string, seconds = 300): Promise<string> {
@@ -176,7 +183,7 @@ export async function getEvidenceSignedUrl(path: string, seconds = 300): Promise
   const { data, error } = await supabase.storage.from(BUCKET).createSignedUrl(path, seconds);
 
   if (error || !data?.signedUrl) {
-    throw new Error(error?.message || "Could not open a preview for this file.");
+    throw new Error(formatLayeredError("Could not open this file", error ?? { message: "Not found", status: 404 }));
   }
 
   return data.signedUrl;
@@ -187,7 +194,9 @@ export async function downloadEvidenceBytes(path: string): Promise<Uint8Array> {
   const { data, error } = await supabase.storage.from(BUCKET).download(path);
 
   if (error || !data) {
-    throw new Error(error?.message || "Could not download this evidence file.");
+    throw new Error(
+      formatLayeredError("Could not download this file", error ?? { message: "Not found", status: 404 }),
+    );
   }
 
   return new Uint8Array(await data.arrayBuffer());

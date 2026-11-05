@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { EvidenceList } from "@/components/evidence/EvidenceList";
 import { SensitiveWarning, type SensitiveFileNotice } from "@/components/evidence/SensitiveWarning"; // FEAT-8
+import { UploadCompressionNote } from "@/lib/image-compress"; // FEAT-12
 import { StatusMessage } from "@/components/ui";
 import {
   deleteEvidence,
@@ -230,6 +231,7 @@ export default function EvidenceManager({
       <div>
         <h3 className="text-sm font-semibold">Evidence</h3>
         <p className="text-sm text-muted">PDF, JPEG, or PNG. 5 MB maximum for each file.</p>
+        <UploadCompressionNote /> {/* FEAT-12 */}
       </div>
 
       <SensitiveWarning
