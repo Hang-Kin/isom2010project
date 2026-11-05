@@ -20,6 +20,7 @@ import {
   type BackupData,
   type BackupZipResult,
 } from "@/lib/backup";
+import { trackEvent } from "@/lib/events"; // FEAT-7
 
 type Notice = {
   tone: "error" | "success" | "info" | "warning";
@@ -134,6 +135,7 @@ export function BackupScreen({
         const generatedAt = new Date();
         const fileName = backupEntriesFileName(generatedAt);
         downloadBlob(new Blob([entriesToCsv(snapshot)], { type: "text/csv;charset=utf-8" }), fileName);
+        trackEvent("backup_downloaded", { kind: "csv" }); // FEAT-7
         setNotice({ tone: "success", message: `Downloaded ${fileName}.` });
       } catch (cause) {
         setNotice({
@@ -155,6 +157,7 @@ export function BackupScreen({
           new Blob([backupToJson(snapshot, generatedAt)], { type: "application/json;charset=utf-8" }),
           fileName,
         );
+        trackEvent("backup_downloaded", { kind: "json" }); // FEAT-7
         setNotice({ tone: "success", message: `Downloaded ${fileName}.` });
       } catch (cause) {
         setNotice({
@@ -193,6 +196,7 @@ export function BackupScreen({
         }
 
         downloadBlob(result.blob, result.fileName);
+        trackEvent("backup_downloaded", { kind: "zip" }); // FEAT-7
         setNotice(finishedZipNotice(result));
       } catch (cause) {
         if (!mountedRef.current) return;

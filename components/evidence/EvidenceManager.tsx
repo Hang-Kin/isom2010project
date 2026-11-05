@@ -10,6 +10,7 @@ import {
   uploadEvidence,
 } from "@/lib/evidence";
 import type { EvidenceFile } from "@/lib/types";
+import { trackEvent } from "@/lib/events"; // FEAT-7
 
 type UploadJob = {
   id: string;
@@ -86,6 +87,7 @@ export default function EvidenceManager({
       jobs.map(async (job) => {
         try {
           await uploadEvidence(achievementId, job.file);
+          trackEvent("evidence_uploaded", { file_type: /pdf$/i.test(job.file.type) || /\.pdf$/i.test(job.file.name) ? "pdf" : /png$/i.test(job.file.type) || /\.png$/i.test(job.file.name) ? "png" : /jpe?g$/i.test(job.file.type) || /\.jpe?g$/i.test(job.file.name) ? "jpeg" : "other", size_kb: Math.round(job.file.size / 1024) }); // FEAT-7
           setUploads((current) => current.filter((item) => item.id !== job.id));
         } catch (cause) {
           const message = cause instanceof Error ? cause.message : `Could not upload ${job.name}.`;

@@ -14,6 +14,7 @@ import {
 } from "@/lib/achievements";
 import { friendlySupabaseError } from "@/lib/supabase/errors";
 import { createClient } from "@/lib/supabase/client";
+import { trackEvent } from "@/lib/events"; // FEAT-7
 import { CATEGORIES } from "@/lib/categories";
 
 export function AchievementForm({
@@ -110,6 +111,7 @@ export function AchievementForm({
           setPending(false);
           return;
         }
+        trackEvent("achievement_created", { category: result.value.category }); // FEAT-7
       } else {
         const { error } = await supabase
           .from("achievements")

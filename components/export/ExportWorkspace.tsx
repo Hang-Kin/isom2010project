@@ -22,6 +22,7 @@ import {
 // FEAT-3: counter
 import { AnswerLimitControl, type AnswerLimitValue } from "@/components/export/AnswerLimitControl";
 import { AnswerCountSummary, CopyLimitWarning, WordCounter } from "@/components/export/WordCounter";
+import { markEvent, trackEvent } from "@/lib/events"; // FEAT-7
 
 function parseMaxItems(value: string): { limit: number | null; error: string | null } {
   const trimmed = value.trim();
@@ -104,6 +105,8 @@ export function ExportWorkspace() {
       if (pdfUrlRef.current) URL.revokeObjectURL(pdfUrlRef.current);
     };
   }, []);
+
+  useEffect(() => { if (selectedIds.length > 0) trackEvent("entries_selected", { count: selectedIds.length, preset: choice.preset }); }, [selectedIds, choice.preset]); // FEAT-7
 
   function replacePdf(url: string | null) {
     if (pdfUrlRef.current) URL.revokeObjectURL(pdfUrlRef.current);
@@ -320,6 +323,7 @@ export function ExportWorkspace() {
     setCopyError(null);
     try {
       await navigator.clipboard.writeText(text);
+      trackEvent("answers_copied", { style: choice.style }); // FEAT-7
       setCopiedId(id);
       if (copiedTimer.current) clearTimeout(copiedTimer.current);
       copiedTimer.current = setTimeout(() => {
@@ -332,6 +336,7 @@ export function ExportWorkspace() {
 
   async function generate() {
     if (selected.length === 0 || windowError || max.error) return;
+    markEvent("pdf_generated"); // FEAT-7
     setGenerating(true);
     setGenerateError(null);
     setSkipped([]);
@@ -376,6 +381,7 @@ export function ExportWorkspace() {
       setEvidencePageCount(result.evidencePageCount);
       setSkipped(result.skipped);
       setReplacedNonLatin(result.replacedNonLatin);
+      trackEvent("pdf_generated", { entries: result.achievementCount, evidence_pages: result.evidencePageCount, size_kb: Math.round(result.bytes.byteLength / 1024) }); // FEAT-7
     } catch (cause) {
       setGenerateError(cause instanceof Error ? cause.message : "Could not generate the PDF.");
     } finally {
@@ -385,6 +391,7 @@ export function ExportWorkspace() {
 
   function downloadPdf() {
     if (!pdfUrl) return;
+    trackEvent("pdf_downloaded"); // FEAT-7
     const anchor = document.createElement("a");
     anchor.href = pdfUrl;
     anchor.download = pdfDownloadName(applicationName.trim() || "Evidence packet");
