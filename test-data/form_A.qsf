@@ -1,0 +1,696 @@
+{
+  "SurveyEntry": {
+    "SurveyID": "SV_EvVaultFormA001",
+    "SurveyName": "Evidence Vault Form A",
+    "SurveyDescription": null,
+    "SurveyOwnerID": "UR_EvVaultFormA001",
+    "SurveyBrandID": "qualtrics",
+    "DivisionID": null,
+    "SurveyLanguage": "EN",
+    "SurveyActiveResponseSet": "RS_EvVaultFormA001",
+    "SurveyStatus": "Inactive",
+    "SurveyStartDate": "0000-00-00 00:00:00",
+    "SurveyExpirationDate": "0000-00-00 00:00:00",
+    "SurveyCreationDate": "2026-11-06 12:00:00",
+    "CreatorID": "UR_EvVaultFormA001",
+    "LastModified": "2026-11-06 12:00:00",
+    "LastAccessed": "0000-00-00 00:00:00",
+    "LastActivated": "0000-00-00 00:00:00",
+    "Deleted": null
+  },
+  "SurveyElements": [
+    {
+      "SurveyID": "SV_EvVaultFormA001",
+      "Element": "BL",
+      "PrimaryAttribute": "Survey Blocks",
+      "SecondaryAttribute": null,
+      "TertiaryAttribute": null,
+      "Payload": [
+        {
+          "Type": "Default",
+          "Description": "Default Question Block",
+          "ID": "BL_EvVaultFormA001",
+          "BlockElements": [
+            {
+              "Type": "Question",
+              "QuestionID": "QID1"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID2"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID3"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID4"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID5"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID6"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID7"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID8"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID9"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID10"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID11"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID12"
+            }
+          ]
+        },
+        {
+          "Type": "Trash",
+          "Description": "Trash / Unused Questions",
+          "ID": "BL_EvVaultFormATrs",
+          "BlockElements": []
+        }
+      ]
+    },
+    {
+      "SurveyID": "SV_EvVaultFormA001",
+      "Element": "FL",
+      "PrimaryAttribute": "Survey Flow",
+      "SecondaryAttribute": null,
+      "TertiaryAttribute": null,
+      "Payload": {
+        "Type": "Root",
+        "FlowID": "FL_1",
+        "Flow": [
+          {
+            "Type": "Block",
+            "ID": "BL_EvVaultFormA001",
+            "FlowID": "FL_2",
+            "Autofill": []
+          }
+        ],
+        "Properties": {
+          "Count": 2
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormA001",
+      "Element": "PROJ",
+      "PrimaryAttribute": "CORE",
+      "SecondaryAttribute": null,
+      "TertiaryAttribute": "1.1.0",
+      "Payload": {
+        "ProjectCategory": "CORE",
+        "SchemaVersion": "1.1.0"
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormA001",
+      "Element": "QC",
+      "PrimaryAttribute": "Survey Question Count",
+      "SecondaryAttribute": "12",
+      "TertiaryAttribute": null,
+      "Payload": null
+    },
+    {
+      "SurveyID": "SV_EvVaultFormA001",
+      "Element": "RS",
+      "PrimaryAttribute": "RS_EvVaultFormA001",
+      "SecondaryAttribute": "Default Response Set",
+      "TertiaryAttribute": null,
+      "Payload": null
+    },
+    {
+      "SurveyID": "SV_EvVaultFormA001",
+      "Element": "SCO",
+      "PrimaryAttribute": "Scoring",
+      "SecondaryAttribute": null,
+      "TertiaryAttribute": null,
+      "Payload": {
+        "ScoringCategories": [],
+        "ScoringCategoryGroups": [],
+        "ScoringSummaryCategory": null,
+        "ScoringSummaryAfterQuestions": 0,
+        "ScoringSummaryAfterSurvey": 0,
+        "DefaultScoringCategory": null,
+        "AutoScoringCategory": null
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormA001",
+      "Element": "SO",
+      "PrimaryAttribute": "Survey Options",
+      "SecondaryAttribute": null,
+      "TertiaryAttribute": null,
+      "Payload": {
+        "BackButton": "false",
+        "SaveAndContinue": "true",
+        "SurveyProtection": "PublicSurvey",
+        "BallotBoxStuffingPrevention": "false",
+        "NoIndex": "Yes",
+        "SecureResponseFiles": "true",
+        "SurveyExpiration": "None",
+        "SurveyTermination": "DefaultMessage",
+        "Header": "",
+        "Footer": "",
+        "ProgressBarDisplay": "None",
+        "PartialData": "+1 week",
+        "ValidationMessage": "",
+        "PreviousButton": "",
+        "NextButton": "",
+        "SurveyTitle": "Evidence Vault Form A",
+        "SkinLibrary": "qualtrics",
+        "SkinType": "templated",
+        "Skin": {
+          "brandingId": null,
+          "templateId": "*base",
+          "overrides": null
+        },
+        "NewScoring": 1,
+        "SurveyMetaDescription": ""
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormA001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID1",
+      "SecondaryAttribute": "List your 3 most recent awards. For each one, write the award received, the year of award, and the ",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "List your 3 most recent awards. For each one, write the award received, the year of award, and the organizer. If you have fewer than 3, list every award you have. If none, write N/A.",
+        "DataExportTag": "A1",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "List your 3 most recent awards. For each one, write the award received, the year of award, and the ",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID1",
+        "QuestionType": "TE",
+        "Selector": "SL",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "None"
+          }
+        },
+        "SearchSource": {
+          "AllowFreeResponse": "false"
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormA001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID2",
+      "SecondaryAttribute": "Enter the start date of the achievement that carries your most recent award. If that row shows a si",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "Enter the start date of the achievement that carries your most recent award. If that row shows a single date, enter that date. If it shows a range, enter the first date.",
+        "DataExportTag": "A2",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "Enter the start date of the achievement that carries your most recent award. If that row shows a si",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID2",
+        "QuestionType": "TE",
+        "Selector": "SL",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "ContentType",
+            "ContentType": "ValidDate",
+            "ValidDateType": "DateWithFormat",
+            "ValidDateFormat": "dd/mm/yyyy",
+            "ValidPhoneType": "ValidUSPhone",
+            "ValidZipType": "ValidUSZip",
+            "ValidNumber": {
+              "Min": "",
+              "Max": "",
+              "NumDecimals": ""
+            }
+          }
+        },
+        "SearchSource": {
+          "AllowFreeResponse": "false"
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormA001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID3",
+      "SecondaryAttribute": "What is the category of the achievement you used in A2?",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "What is the category of the achievement you used in A2?",
+        "DataExportTag": "A3",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "What is the category of the achievement you used in A2?",
+        "Language": [],
+        "NextChoiceId": 9,
+        "NextAnswerId": 1,
+        "QuestionID": "QID3",
+        "QuestionType": "MC",
+        "Selector": "DL",
+        "SubSelector": "TX",
+        "Choices": {
+          "1": {
+            "Display": "Internship"
+          },
+          "2": {
+            "Display": "Volunteering"
+          },
+          "3": {
+            "Display": "Competition"
+          },
+          "4": {
+            "Display": "Leadership"
+          },
+          "5": {
+            "Display": "Certificate"
+          },
+          "6": {
+            "Display": "Qualification"
+          },
+          "7": {
+            "Display": "Workshop"
+          },
+          "8": {
+            "Display": "Other"
+          }
+        },
+        "ChoiceOrder": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8"
+        ],
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "None"
+          }
+        },
+        "DynamicChoicesData": []
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormA001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID4",
+      "SecondaryAttribute": "How many achievements in your bank have category Competition or category Leadership? Count each mat",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "How many achievements in your bank have category Competition or category Leadership? Count each matching row once. Enter the total as a whole number.",
+        "DataExportTag": "A4",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "How many achievements in your bank have category Competition or category Leadership? Count each mat",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID4",
+        "QuestionType": "TE",
+        "Selector": "SL",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "ContentType",
+            "ContentType": "ValidNumber",
+            "ValidDateType": "DateWithFormat",
+            "ValidPhoneType": "ValidUSPhone",
+            "ValidZipType": "ValidUSZip",
+            "ValidNumber": {
+              "Min": "0",
+              "Max": "",
+              "NumDecimals": "0"
+            }
+          }
+        },
+        "SearchSource": {
+          "AllowFreeResponse": "false"
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormA001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID5",
+      "SecondaryAttribute": "List every achievement whose category is Leadership. Ignore the last-2-years window. For each, writ",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "List every achievement whose category is Leadership. Ignore the last-2-years window. For each, write the item name, role, organizer, and dates. If none, write N/A.",
+        "DataExportTag": "A5",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "List every achievement whose category is Leadership. Ignore the last-2-years window. For each, writ",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID5",
+        "QuestionType": "TE",
+        "Selector": "SL",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "None"
+          }
+        },
+        "SearchSource": {
+          "AllowFreeResponse": "false"
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormA001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID6",
+      "SecondaryAttribute": "List every internship whose dates overlap 6 November 2024 to 6 November 2026. For each, write the i",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "List every internship whose dates overlap 6 November 2024 to 6 November 2026. For each, write the item name, organizer, dates, and role. If none, write N/A.",
+        "DataExportTag": "A6",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "List every internship whose dates overlap 6 November 2024 to 6 November 2026. For each, write the i",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID6",
+        "QuestionType": "TE",
+        "Selector": "SL",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "None"
+          }
+        },
+        "SearchSource": {
+          "AllowFreeResponse": "false"
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormA001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID7",
+      "SecondaryAttribute": "Choose your 2 strongest achievements for academic merit or leadership. Name each item, give the rol",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "Choose your 2 strongest achievements for academic merit or leadership. Name each item, give the role, and explain why you chose it, in about 80 words for both together. If you have fewer than 2, explain the ones you have. If none, write N/A.",
+        "DataExportTag": "A7",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "Choose your 2 strongest achievements for academic merit or leadership. Name each item, give the rol",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID7",
+        "QuestionType": "TE",
+        "Selector": "ESTB",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "None"
+          }
+        },
+        "SearchSource": {
+          "AllowFreeResponse": "false"
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormA001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID8",
+      "SecondaryAttribute": "Upload the evidence file for the achievement that carries your most recent award.",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "Upload the evidence file for the achievement that carries your most recent award.",
+        "DataExportTag": "A8",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "Upload the evidence file for the achievement that carries your most recent award.",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID8",
+        "QuestionType": "FileUpload",
+        "Selector": "FileUpload",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "ContentType",
+            "ContentType": "PDF"
+          }
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormA001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID9",
+      "SecondaryAttribute": "For the file you uploaded in A8, write the item name and the description from the bank. Do not add ",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "For the file you uploaded in A8, write the item name and the description from the bank. Do not add facts that are not in the description.",
+        "DataExportTag": "A9",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "For the file you uploaded in A8, write the item name and the description from the bank. Do not add ",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID9",
+        "QuestionType": "TE",
+        "Selector": "SL",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "None"
+          }
+        },
+        "SearchSource": {
+          "AllowFreeResponse": "false"
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormA001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID10",
+      "SecondaryAttribute": "Upload the evidence file for one achievement whose category is Leadership. If you have no Leadershi",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "Upload the evidence file for one achievement whose category is Leadership. If you have no Leadership row, upload the evidence file for a Competition whose role contains the word “lead”. If none, write N/A and do not upload a file.<br><br>If none, write N/A: ________",
+        "DataExportTag": "A10",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "Upload the evidence file for one achievement whose category is Leadership. If you have no Leadershi",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID10",
+        "QuestionType": "FileUpload",
+        "Selector": "FileUpload",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "OFF",
+            "ForceResponseType": "ON",
+            "Type": "ContentType",
+            "ContentType": "PDF"
+          }
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormA001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID11",
+      "SecondaryAttribute": "Which label best fits the single achievement you would rank first for academic merit?",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "Which label best fits the single achievement you would rank first for academic merit?",
+        "DataExportTag": "A11",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "Which label best fits the single achievement you would rank first for academic merit?",
+        "Language": [],
+        "NextChoiceId": 6,
+        "NextAnswerId": 1,
+        "QuestionID": "QID11",
+        "QuestionType": "MC",
+        "Selector": "DL",
+        "SubSelector": "TX",
+        "Choices": {
+          "1": {
+            "Display": "An award from a competition"
+          },
+          "2": {
+            "Display": "An award attached to a leadership role"
+          },
+          "3": {
+            "Display": "An internship with no award"
+          },
+          "4": {
+            "Display": "A certificate, qualification, or workshop"
+          },
+          "5": {
+            "Display": "No achievement fits"
+          }
+        },
+        "ChoiceOrder": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ],
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "None"
+          }
+        },
+        "DynamicChoicesData": []
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormA001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID12",
+      "SecondaryAttribute": "In 100–150 words, describe one leadership achievement from your bank. Name the item and the organiz",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "In 100–150 words, describe one leadership achievement from your bank. Name the item and the organizer, and say what you did in the role, using only the description. If you have no leadership achievement, describe the community impact of one volunteering item instead, including its item name and organizer. If none, write N/A.",
+        "DataExportTag": "A12",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "In 100–150 words, describe one leadership achievement from your bank. Name the item and the organiz",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID12",
+        "QuestionType": "TE",
+        "Selector": "ESTB",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "None"
+          }
+        },
+        "SearchSource": {
+          "AllowFreeResponse": "false"
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormA001",
+      "Element": "STAT",
+      "PrimaryAttribute": "Survey Statistics",
+      "SecondaryAttribute": null,
+      "TertiaryAttribute": null,
+      "Payload": {
+        "MobileCompatible": true,
+        "ID": "Survey Statistics"
+      }
+    }
+  ]
+}
