@@ -1,420 +1,443 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { FeedbackTable } from "@/components/insights/FeedbackTable";
 import { FunnelTable } from "@/components/insights/FunnelTable";
 import { RetentionTable } from "@/components/insights/RetentionTable";
 import { Field, PageHeader, StatusMessage } from "@/components/ui";
 import {
   ACCESS_DENIED,
+  ACTIVATION_DEFINITION,
+  FUNNEL_NOTE,
   HONEST_LIMITS,
   NO_DATA_YET,
+  activationError,
+  activationFromRows,
+  dateBounds,
   describeFilters,
   fetchIsAdmin,
-  filtersFromDraft,
-  formatActivation,
   formatMinutes,
-  funnelIsEmpty,
-  loadInsights,
-  retentionIsEmpty,
-  writeExcludeDraft,
+  loadFeedback,
+  loadFunnel,
+  loadRetention,
+  loadTimeToValue,
+  parseExcludeIds,
   readExcludeDraft,
+  writeExcludeDraft,
+  type ActivationView,
   type AppliedFilters,
-  type InsightsSnapshot,
+  type FeedbackSummary,
+  type FunnelRow,
+  type InsightLoad,
+  type RetentionRow,
+  type TimeToValue,
 } from "@/lib/insights";
 
-type ErrorKind = "validation" | "load";
+type Access = "checking" | "denied" | "admin";
 
-type Phase =
-  | { kind: "checking" }
-  | { kind: "denied" }
-  | { kind: "failed"; message: string }
-  | {
-      kind: "admin";
-      loading: boolean;
-      error: string | null;
-      errorKind: ErrorKind | null;
-      notice: string | null;
-      snapshot: InsightsSnapshot | null;
-      applied: AppliedFilters | null;
-    };
+type Phase<T> =
+  | { status: "loading" }
+  | { status: "empty" }
+  | { status: "error"; message: string }
+  | { status: "ready"; data: T };
 
-const STORAGE_WARNING = "Could not save excluded ids in this browser.";
+type Draft = {
+  from: string;
+  to: string;
+  excludeText: string;
+};
+
+const STORAGE_WARNING = "Could not save the exclude list in this browser.";
+const BLOCKED_MESSAGE = "Fix the exclude list, then refresh.";
+
+const loadingPhase = { status: "loading" } as const;
 
 export function InsightsWorkspace() {
-  const [phase, setPhase] = useState<Phase>({ kind: "checking" });
-  const [reloadKey, setReloadKey] = useState(0);
+  const [access, setAccess] = useState<Access>("checking");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [excludeText, setExcludeText] = useState("");
   const [storageWarning, setStorageWarning] = useState<string | null>(null);
+  const [summary, setSummary] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [funnel, setFunnel] = useState<Phase<FunnelRow[]>>(loadingPhase);
+  const [activation, setActivation] = useState<Phase<ActivationView>>(loadingPhase);
+  const [retention, setRetention] = useState<Phase<RetentionRow[]>>(loadingPhase);
+  const [timeToValue, setTimeToValue] = useState<Phase<TimeToValue>>(loadingPhase);
+  const [feedback, setFeedback] = useState<Phase<FeedbackSummary>>(loadingPhase);
   const requestRef = useRef(0);
-  const mountedRef = useRef(true);
+  const refreshLock = useRef(false);
 
-  const runLoad = useCallback(
-    async (
-      draft: { from: string; to: string; excludeText: string },
-      requestId: number,
-      success: string,
-    ) => {
-      const filters = filtersFromDraft(draft);
-      if (!filters.ok) {
-        if (!mountedRef.current || requestRef.current !== requestId) return;
-        setPhase((current) => {
-          if (current.kind === "admin") {
-            return { ...current, loading: false, error: filters.error, errorKind: "validation", notice: null };
-          }
-          return {
-            kind: "admin",
-            loading: false,
-            error: filters.error,
-            errorKind: "validation",
-            notice: null,
-            snapshot: null,
-            applied: null,
-          };
-        });
-        return;
-      }
+  const excludeParse = useMemo(() => parseExcludeIds(excludeText), [excludeText]);
+  const bounds = useMemo(() => dateBounds(from, to), [from, to]);
+  const dateError = bounds.ok ? null : bounds.error;
+  const loading =
+    access === "admin" &&
+    [funnel, activation, retention, timeToValue, feedback].some((phase) => phase.status === "loading");
 
-      setPhase((current) => ({
-        kind: "admin",
-        loading: true,
-        error: null,
-        errorKind: null,
-        notice: null,
-        snapshot: current.kind === "admin" ? current.snapshot : null,
-        applied: current.kind === "admin" ? current.applied : null,
-      }));
+  const run = useCallback(async (draft: Draft, source: "load" | "refresh") => {
+    const requestId = ++requestRef.current;
+    const current = () => requestRef.current === requestId;
+    const exclude = parseExcludeIds(draft.excludeText);
+    const dates = dateBounds(draft.from, draft.to);
 
-      try {
-        const snapshot = await loadInsights({
-          from: filters.from,
-          to: filters.to,
-          exclude: filters.exclude,
-        });
-        if (!mountedRef.current || requestRef.current !== requestId) return;
-        setPhase({
-          kind: "admin",
-          loading: false,
-          error: null,
-          errorKind: null,
-          notice: success,
-          snapshot,
-          applied: filters.applied,
-        });
-      } catch (cause) {
-        if (!mountedRef.current || requestRef.current !== requestId) return;
-        const message = cause instanceof Error ? cause.message : "Could not load insights.";
-        if (message === ACCESS_DENIED) {
-          setPhase({ kind: "denied" });
-          return;
-        }
-        setPhase((current) => {
-          const snapshot = current.kind === "admin" ? current.snapshot : null;
-          const applied = current.kind === "admin" ? current.applied : null;
-          const stale = snapshot ? " The tables still show the previous totals." : "";
-          return {
-            kind: "admin",
-            loading: false,
-            error: `${message}${stale}`,
-            errorKind: "load",
-            notice: null,
-            snapshot,
-            applied,
-          };
-        });
-      }
-    },
-    [],
-  );
+    if (exclude.blocked) {
+      if (!current()) return;
+      const blocked: Phase<never> = { status: "error", message: BLOCKED_MESSAGE };
+      setNotice(null);
+      setSummary(null);
+      setFunnel(blocked);
+      setActivation(blocked);
+      setRetention(blocked);
+      setTimeToValue(blocked);
+      setFeedback(blocked);
+      return;
+    }
 
-  useEffect(() => {
-    mountedRef.current = true;
-    return () => {
-      mountedRef.current = false;
+    if (!current()) return;
+    setNotice(null);
+    const applied: AppliedFilters = {
+      from: draft.from.trim(),
+      to: draft.to.trim(),
+      excluded: exclude.ids.length,
     };
+    setSummary(describeFilters(applied, dates.ok ? null : dates.error));
+    setFunnel(loadingPhase);
+    setActivation(loadingPhase);
+    setRetention(loadingPhase);
+    setTimeToValue(loadingPhase);
+    setFeedback(loadingPhase);
+
+    const funnelTask: Promise<InsightLoad<FunnelRow[]>> = dates.ok
+      ? loadFunnel({ from: dates.from, to: dates.to, exclude: exclude.ids })
+      : Promise.resolve({ status: "error", message: dates.error });
+
+    const [funnelResult, retentionResult, timeResult, feedbackResult] = await Promise.all([
+      funnelTask,
+      loadRetention(exclude.ids),
+      loadTimeToValue(exclude.ids),
+      loadFeedback(exclude.ids),
+    ]);
+    if (!current()) return;
+
+    if (
+      funnelResult.status === "denied" ||
+      retentionResult.status === "denied" ||
+      timeResult.status === "denied" ||
+      feedbackResult.status === "denied"
+    ) {
+      setAccess("denied");
+      return;
+    }
+
+    const funnelPhase = present(funnelResult);
+    let activationFailed = false;
+    if (funnelPhase.status === "ready") {
+      const view = activationFromRows(funnelPhase.data);
+      if (view === "missing") {
+        activationFailed = true;
+        setActivation({ status: "error", message: activationError });
+      } else if (view === "empty") {
+        setActivation({ status: "empty" });
+      } else {
+        setActivation({ status: "ready", data: view });
+      }
+      setFunnel(funnelPhase);
+    } else if (funnelPhase.status === "empty") {
+      setFunnel({ status: "empty" });
+      setActivation({ status: "empty" });
+    } else {
+      setFunnel(funnelPhase);
+      setActivation(funnelPhase);
+    }
+
+    setRetention(present(retentionResult));
+    setTimeToValue(present(timeResult));
+    setFeedback(present(feedbackResult));
+
+    const failed =
+      activationFailed ||
+      funnelResult.status === "error" ||
+      retentionResult.status === "error" ||
+      timeResult.status === "error" ||
+      feedbackResult.status === "error";
+    if (source === "refresh" && !failed) setNotice("Updated.");
   }, []);
 
   useEffect(() => {
     let active = true;
-    const requestId = ++requestRef.current;
     const stored = readExcludeDraft();
 
-    async function start() {
-      try {
-        const allowed = await fetchIsAdmin();
-        if (!active || requestRef.current !== requestId) return;
-        if (!allowed) {
-          setPhase({ kind: "denied" });
-          return;
-        }
-        setExcludeText(stored);
-        await runLoad({ from: "", to: "", excludeText: stored }, requestId, "Insights loaded.");
-      } catch (cause) {
-        if (!active || requestRef.current !== requestId) return;
-        const message = cause instanceof Error ? cause.message : "Could not load insights.";
-        if (message === ACCESS_DENIED) {
-          setPhase({ kind: "denied" });
-          return;
-        }
-        setPhase({ kind: "failed", message });
+    void fetchIsAdmin().then((allowed) => {
+      if (!active) return;
+      if (!allowed) {
+        setAccess("denied");
+        return;
       }
-    }
+      setExcludeText(stored);
+      setAccess("admin");
+      void run({ from: "", to: "", excludeText: stored }, "load");
+    });
 
-    void start();
     return () => {
       active = false;
+      requestRef.current += 1;
     };
-  }, [reloadKey, runLoad]);
+  }, [run]);
 
   function rememberExclude(value: string) {
     setExcludeText(value);
+    const parsed = parseExcludeIds(value);
+    if (parsed.blocked) return;
     setStorageWarning(writeExcludeDraft(value) ? null : STORAGE_WARNING);
   }
 
-  function applyFilters() {
-    if (phase.kind !== "admin" || phase.loading) return;
-    const requestId = ++requestRef.current;
-    if (!writeExcludeDraft(excludeText)) setStorageWarning(STORAGE_WARNING);
-    void runLoad({ from, to, excludeText }, requestId, "Insights updated.");
-  }
-
-  function retryLoad() {
-    if (phase.kind !== "admin" || phase.loading) return;
-    const requestId = ++requestRef.current;
-    void runLoad({ from, to, excludeText }, requestId, "Insights updated.");
+  async function refresh() {
+    if (loading || excludeParse.blocked || refreshLock.current) return;
+    refreshLock.current = true;
+    try {
+      const allowed = await fetchIsAdmin();
+      if (!allowed) {
+        setAccess("denied");
+        return;
+      }
+      setStorageWarning(writeExcludeDraft(excludeText) ? null : STORAGE_WARNING);
+      await run({ from, to, excludeText }, "refresh");
+    } finally {
+      refreshLock.current = false;
+    }
   }
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Insights"
-        lede="Totals for the course evaluation. These figures are counts only."
-      />
+    <div className="min-w-0 space-y-6">
+      <PageHeader title="Insights" lede="Totals for the course evaluation. These figures are counts only." />
 
-      {phase.kind === "checking" ? <StatusMessage tone="info">Checking access…</StatusMessage> : null}
+      {access === "checking" ? <StatusMessage tone="info">Checking access…</StatusMessage> : null}
 
-      {phase.kind === "denied" ? (
+      {access === "denied" ? (
         <section className="card">
           <p>{ACCESS_DENIED}</p>
         </section>
       ) : null}
 
-      {phase.kind === "failed" ? (
-        <div className="space-y-3">
-          <StatusMessage tone="error">{phase.message}</StatusMessage>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={() => {
-              setPhase({ kind: "checking" });
-              setReloadKey((value) => value + 1);
+      {access === "admin" ? (
+        <>
+          <section className="card space-y-2 border-warning/40 bg-warning-soft" aria-labelledby="insights-limits">
+            <h2 id="insights-limits" className="font-serif text-2xl text-warning">
+              Limits
+            </h2>
+            <p className="text-sm leading-relaxed">{HONEST_LIMITS}</p>
+          </section>
+
+          <form
+            className="card space-y-4"
+            onSubmit={(event) => {
+              event.preventDefault();
+              refresh();
             }}
           >
-            Try again
-          </button>
-        </div>
-      ) : null}
+            <div>
+              <h2 className="font-serif text-2xl">Filters</h2>
+              <p className="mt-1 text-sm leading-relaxed text-muted">
+                Dates are optional and apply to the funnel only. The end date is included, in your local
+                timezone. Excluded ids apply to every figure.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="From" htmlFor="insights-from">
+                <input
+                  id="insights-from"
+                  className="field-input"
+                  type="date"
+                  value={from}
+                  onChange={(event) => setFrom(event.target.value)}
+                  disabled={loading}
+                  aria-invalid={dateError ? true : undefined}
+                  aria-describedby={dateError ? "insights-dates-error" : undefined}
+                />
+              </Field>
+              <Field label="To" htmlFor="insights-to">
+                <input
+                  id="insights-to"
+                  className="field-input"
+                  type="date"
+                  value={to}
+                  onChange={(event) => setTo(event.target.value)}
+                  disabled={loading}
+                  aria-invalid={dateError ? true : undefined}
+                  aria-describedby={dateError ? "insights-dates-error" : undefined}
+                />
+              </Field>
+            </div>
+            {dateError ? (
+              <p id="insights-dates-error" className="text-sm text-danger" role="alert">
+                {dateError}
+              </p>
+            ) : null}
+            <Field
+              label="Exclude user ids (one per line)"
+              htmlFor="insights-exclude"
+              hint="Saved in this browser. Invalid lines are ignored."
+              error={excludeParse.error ?? undefined}
+            >
+              <textarea
+                id="insights-exclude"
+                className="field-input min-h-28 font-mono text-sm"
+                value={excludeText}
+                onChange={(event) => rememberExclude(event.target.value)}
+                spellCheck={false}
+                autoCapitalize="off"
+                autoCorrect="off"
+                autoComplete="off"
+                disabled={loading}
+                aria-invalid={excludeParse.error ? true : undefined}
+                aria-describedby={excludeParse.error ? "insights-exclude-error" : undefined}
+                placeholder="One user id per line"
+              />
+            </Field>
+            <button
+              type="submit"
+              className="btn btn-primary w-full sm:w-auto"
+              disabled={loading || excludeParse.blocked}
+            >
+              {loading ? "Refreshing…" : "Refresh"}
+            </button>
+          </form>
 
-      {phase.kind === "admin" ? (
-        <AdminInsights
-          phase={phase}
-          from={from}
-          to={to}
-          excludeText={excludeText}
-          storageWarning={storageWarning}
-          onFrom={setFrom}
-          onTo={setTo}
-          onExclude={rememberExclude}
-          onApply={applyFilters}
-          onRetry={retryLoad}
-        />
+          {storageWarning ? <StatusMessage tone="warning">{storageWarning}</StatusMessage> : null}
+          {summary ? <p className="text-sm text-muted">{summary}</p> : null}
+          {notice ? <StatusMessage tone="success">{notice}</StatusMessage> : null}
+
+          <InsightBlock
+            id="insights-funnel"
+            title="Funnel"
+            description="Distinct users at each step. The bar is scaled to the largest step."
+            note={FUNNEL_NOTE}
+            phase={funnel}
+          >
+            {funnel.status === "ready" ? <FunnelTable rows={funnel.data} /> : null}
+          </InsightBlock>
+
+          <div className="grid min-w-0 gap-4 md:grid-cols-2">
+            <InsightBlock
+              id="insights-activation"
+              title="Activation"
+              description={`Activation is the ${ACTIVATION_DEFINITION}.`}
+              phase={activation}
+            >
+              {activation.status === "ready" ? (
+                <>
+                  <p className="font-serif text-3xl leading-tight break-words sm:text-4xl">{activation.data.label}</p>
+                  <p className="text-sm text-muted">Generated PDF users / Signed up users</p>
+                </>
+              ) : null}
+            </InsightBlock>
+
+            <InsightBlock
+              id="insights-time"
+              title="Time to first value"
+              description="Minutes from account creation to the first PDF."
+              phase={timeToValue}
+            >
+              {timeToValue.status === "ready" ? (
+                <dl className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-3">
+                  <div className="min-w-0">
+                    <dt className="text-sm text-muted">Users</dt>
+                    <dd className="font-serif text-3xl tabular-nums">{timeToValue.data.users}</dd>
+                  </div>
+                  <div className="min-w-0">
+                    <dt className="text-sm text-muted">Median minutes</dt>
+                    <dd className="font-serif text-3xl tabular-nums">
+                      {formatMinutes(timeToValue.data.medianMinutes)}
+                    </dd>
+                  </div>
+                  <div className="min-w-0">
+                    <dt className="text-sm text-muted">Max minutes</dt>
+                    <dd className="font-serif text-3xl tabular-nums">
+                      {formatMinutes(timeToValue.data.maxMinutes)}
+                    </dd>
+                  </div>
+                </dl>
+              ) : null}
+            </InsightBlock>
+          </div>
+
+          <InsightBlock
+            id="insights-retention"
+            title="Retention"
+            description="Relative weeks 0 to 3. Week 0 starts at the first PDF generated or downloaded. The percent uses activated users as the denominator."
+            phase={retention}
+          >
+            {retention.status === "ready" ? <RetentionTable rows={retention.data} /> : null}
+          </InsightBlock>
+
+          <InsightBlock
+            id="insights-feedback"
+            title="Feedback"
+            description="Responses and the average minutes for each answer: Yes, Mostly, and No. The minutes are a self-report."
+            phase={feedback}
+          >
+            {feedback.status === "ready" ? <FeedbackTable summary={feedback.data} /> : null}
+          </InsightBlock>
+
+          <section className="card space-y-3" aria-labelledby="insights-gates">
+            <h2 id="insights-gates" className="font-serif text-2xl">
+              Course gates
+            </h2>
+            <div className="space-y-3 text-sm leading-relaxed">
+              <p>
+                <span className="font-semibold">Gate 1, adoption.</span> The funnel and the activation rate are
+                the adoption measures, and activation is the {ACTIVATION_DEFINITION}.
+              </p>
+              <p>
+                <span className="font-semibold">Gate 2, continued use.</span> Retention across relative weeks, and
+                any second-day PDF, are the continued-use measures.
+              </p>
+              <p>
+                <span className="font-semibold">Gate 3, value.</span> The feedback match rate, the share of Yes or
+                Mostly answers, is the value measure.
+              </p>
+            </div>
+          </section>
+        </>
       ) : null}
     </div>
   );
 }
 
-function AdminInsights({
+function present<T>(result: InsightLoad<T>): Phase<T> {
+  if (result.status === "denied") return { status: "error", message: ACCESS_DENIED };
+  return result;
+}
+
+function InsightBlock({
+  id,
+  title,
+  description,
+  note,
   phase,
-  from,
-  to,
-  excludeText,
-  storageWarning,
-  onFrom,
-  onTo,
-  onExclude,
-  onApply,
-  onRetry,
+  children,
 }: {
-  phase: Extract<Phase, { kind: "admin" }>;
-  from: string;
-  to: string;
-  excludeText: string;
-  storageWarning: string | null;
-  onFrom: (value: string) => void;
-  onTo: (value: string) => void;
-  onExclude: (value: string) => void;
-  onApply: () => void;
-  onRetry: () => void;
+  id: string;
+  title: string;
+  description: string;
+  note?: string;
+  phase: Phase<unknown>;
+  children?: ReactNode;
 }) {
-  const snapshot = phase.snapshot;
-  const funnelEmpty = snapshot ? funnelIsEmpty(snapshot.funnel) : false;
-  const retentionEmpty = snapshot ? retentionIsEmpty(snapshot.retention) : false;
-  const timeEmpty = snapshot ? snapshot.timeToValue.users === 0 : false;
-  const activationText = snapshot ? formatActivation(snapshot.activation.pdfUsers, snapshot.activation.signedUp) : null;
-
   return (
-    <>
-      <section className="card space-y-2 border-warning/40 bg-warning-soft" aria-labelledby="insights-limits">
-        <h2 id="insights-limits" className="font-serif text-2xl text-warning">
-          Limits
+    <section className="card min-w-0 space-y-4" aria-labelledby={id} aria-busy={phase.status === "loading"}>
+      <div className="max-w-2xl">
+        <h2 id={id} className="font-serif text-2xl">
+          {title}
         </h2>
-        <p className="text-sm leading-relaxed">{HONEST_LIMITS}</p>
-      </section>
-
-      <form
-        className="card space-y-4"
-        onSubmit={(event) => {
-          event.preventDefault();
-          onApply();
-        }}
-      >
-        <div>
-          <h2 className="font-serif text-2xl">Filters</h2>
-          <p className="mt-1 text-sm leading-relaxed text-muted">
-            The date range applies to the funnel and the activation card. The end date is included, in
-            your local timezone. Retention and time to first value use the full history, with the same
-            excluded ids.
-          </p>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="From" htmlFor="insights-from">
-            <input
-              id="insights-from"
-              className="field-input"
-              type="date"
-              value={from}
-              onChange={(event) => onFrom(event.target.value)}
-              disabled={phase.loading}
-            />
-          </Field>
-          <Field label="To" htmlFor="insights-to">
-            <input
-              id="insights-to"
-              className="field-input"
-              type="date"
-              value={to}
-              onChange={(event) => onTo(event.target.value)}
-              disabled={phase.loading}
-            />
-          </Field>
-        </div>
-        <Field
-          label="Team user ids to exclude"
-          htmlFor="insights-exclude"
-          hint="One user id per line. Saved in this browser. The totals leave these accounts out and do not list them."
-        >
-          <textarea
-            id="insights-exclude"
-            className="field-input min-h-28 font-mono text-sm"
-            value={excludeText}
-            onChange={(event) => onExclude(event.target.value)}
-            spellCheck={false}
-            autoComplete="off"
-            disabled={phase.loading}
-            placeholder="One user id per line"
-          />
-        </Field>
-        <button type="submit" className="btn btn-primary" disabled={phase.loading}>
-          {phase.loading ? "Loading…" : "Apply filters"}
-        </button>
-      </form>
-
-      {storageWarning ? <StatusMessage tone="warning">{storageWarning}</StatusMessage> : null}
-      {phase.loading ? <StatusMessage tone="info">Loading insights…</StatusMessage> : null}
-      {!phase.loading && phase.error ? <StatusMessage tone="error">{phase.error}</StatusMessage> : null}
-      {!phase.loading && phase.error && phase.errorKind === "load" ? (
-        <button type="button" className="btn btn-secondary" onClick={onRetry}>
-          Try again
-        </button>
-      ) : null}
-      {!phase.loading && !phase.error && phase.notice ? (
-        <StatusMessage tone="success">{phase.notice}</StatusMessage>
-      ) : null}
-
-      {snapshot && phase.applied ? (
-        <div className="space-y-6" aria-busy={phase.loading}>
-          <p className="text-sm text-muted">{describeFilters(phase.applied)}</p>
-
-          {funnelEmpty ? (
-            <section className="card space-y-2" aria-labelledby="insights-funnel-empty">
-              <h2 id="insights-funnel-empty" className="font-serif text-2xl">
-                Funnel
-              </h2>
-              <p>{NO_DATA_YET}</p>
-            </section>
-          ) : (
-            <FunnelTable rows={snapshot.funnel} disabled={phase.loading} />
-          )}
-
-          <div className="grid gap-4 lg:grid-cols-2">
-            <section className="card space-y-3" aria-labelledby="insights-activation">
-              <h2 id="insights-activation" className="font-serif text-2xl">
-                Activation
-              </h2>
-              <p className="text-sm leading-relaxed text-muted">
-                Activation is the first PDF generated, not registration.
-              </p>
-              {activationText ? (
-                <>
-                  <p className="font-serif text-4xl leading-tight">{activationText}</p>
-                  <p className="text-sm text-muted">PDF-generating users / signed-up users</p>
-                </>
-              ) : (
-                <p>{NO_DATA_YET}</p>
-              )}
-            </section>
-
-            <section className="card space-y-3" aria-labelledby="insights-time">
-              <h2 id="insights-time" className="font-serif text-2xl">
-                Time to first value
-              </h2>
-              <p className="text-sm leading-relaxed text-muted">
-                Minutes from sign-up to the first PDF generated.
-              </p>
-              {timeEmpty ? (
-                <p>{NO_DATA_YET}</p>
-              ) : (
-                <dl className="grid gap-4 sm:grid-cols-3">
-                  <div>
-                    <dt className="text-sm text-muted">Users</dt>
-                    <dd className="font-serif text-3xl">{snapshot.timeToValue.users}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-sm text-muted">Median minutes</dt>
-                    <dd className="font-serif text-3xl">{formatMinutes(snapshot.timeToValue.medianMinutes)}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-sm text-muted">Max minutes</dt>
-                    <dd className="font-serif text-3xl">{formatMinutes(snapshot.timeToValue.maxMinutes)}</dd>
-                  </div>
-                </dl>
-              )}
-            </section>
-          </div>
-
-          {retentionEmpty ? (
-            <section className="card space-y-2" aria-labelledby="insights-retention-empty">
-              <h2 id="insights-retention-empty" className="font-serif text-2xl">
-                Retention
-              </h2>
-              <p>{NO_DATA_YET}</p>
-            </section>
-          ) : (
-            <RetentionTable rows={snapshot.retention} disabled={phase.loading} />
-          )}
-        </div>
-      ) : null}
-    </>
+        <p className="mt-1 text-sm leading-relaxed text-muted">{description}</p>
+        {note ? <p className="mt-2 text-sm leading-relaxed">{note}</p> : null}
+      </div>
+      {phase.status === "loading" ? <p className="text-sm text-muted">Loading…</p> : null}
+      {phase.status === "empty" ? <p>{NO_DATA_YET}</p> : null}
+      {phase.status === "error" ? <StatusMessage tone="error">{phase.message}</StatusMessage> : null}
+      {phase.status === "ready" ? children : null}
+    </section>
   );
 }

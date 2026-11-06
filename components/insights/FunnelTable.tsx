@@ -1,31 +1,26 @@
 import { TableActions } from "@/components/insights/TableActions";
 import { formatPercent, funnelTable, type FunnelRow } from "@/lib/insights";
 
-export function FunnelTable({ rows, disabled }: { rows: FunnelRow[]; disabled?: boolean }) {
-  const dropOff = rows.find((row) => row.largestDropOff);
+export function FunnelTable({ rows }: { rows: FunnelRow[] }) {
+  const dropOff = rows.find((row) => row.largestDrop);
 
   return (
-    <section className="card space-y-4" aria-labelledby="insights-funnel">
-      <div className="max-w-2xl">
-        <h2 id="insights-funnel" className="font-serif text-2xl">
-          Funnel
-        </h2>
-        <p className="mt-1 text-sm leading-relaxed text-muted">
-          Distinct accounts at each step. The bar shows each step as a share of signed-up accounts.
-          Largest drop-off is the steepest fall from the previous step.
-        </p>
-      </div>
+    <div className="space-y-4">
       {dropOff ? (
         <p className="text-sm font-semibold text-warning">
-          Largest drop-off: {dropOff.step}. {dropOff.droppedUsers}{" "}
-          {dropOff.droppedUsers === 1 ? "account" : "accounts"} fewer than the previous step (
-          {formatPercent(dropOff.dropRate)}).
+          Largest drop: {dropOff.step}. {dropOff.droppedUsers}{" "}
+          {dropOff.droppedUsers === 1 ? "fewer user" : "fewer users"} than the previous step.
         </p>
       ) : (
-        <p className="text-sm text-muted">No step has fewer accounts than the one before it.</p>
+        <p className="text-sm text-muted">No step has fewer users than the previous step.</p>
       )}
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[40rem] border-collapse text-left text-sm">
+      <div className="space-y-3 sm:hidden">
+        {rows.map((row) => (
+          <FunnelStack key={row.stepOrder} row={row} />
+        ))}
+      </div>
+      <div className="hidden overflow-x-auto sm:block">
+        <table className="w-full min-w-[36rem] border-collapse text-left text-sm">
           <caption className="sr-only">Funnel from sign-up to PDF download</caption>
           <thead>
             <tr className="border-b border-line text-muted">
@@ -36,10 +31,10 @@ export function FunnelTable({ rows, disabled }: { rows: FunnelRow[]; disabled?: 
                 Users
               </th>
               <th scope="col" className="px-2 py-2 font-semibold">
-                Conversion from previous
+                % of signed up
               </th>
               <th scope="col" className="px-2 py-2 font-semibold">
-                Conversion from signed up
+                % of previous step
               </th>
             </tr>
           </thead>
@@ -47,34 +42,65 @@ export function FunnelTable({ rows, disabled }: { rows: FunnelRow[]; disabled?: 
             {rows.map((row) => (
               <tr
                 key={row.stepOrder}
-                className={row.largestDropOff ? "border-b border-line bg-warning-soft" : "border-b border-line"}
+                className={row.largestDrop ? "border-b border-line bg-warning-soft" : "border-b border-line"}
               >
                 <th scope="row" className="px-2 py-3 font-semibold">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span>{row.step}</span>
-                    {row.largestDropOff ? (
-                      <span className="rounded-full border border-warning/40 bg-card px-2 py-0.5 text-xs font-semibold text-warning">
-                        Largest drop-off
-                      </span>
-                    ) : null}
-                  </div>
-                  <div
-                    className="mt-2 h-2.5 w-full max-w-xs overflow-hidden rounded-full bg-background"
-                    aria-hidden="true"
-                  >
-                    <div className="h-full rounded-full bg-accent" style={{ width: `${row.barPercent}%` }} />
-                  </div>
-                  <span className="sr-only">{row.barPercent.toFixed(1)}% of signed up</span>
+                  <StepLabel row={row} />
+                  <Bar percent={row.barPercent} />
                 </th>
-                <td className="px-2 py-3">{row.users}</td>
-                <td className="px-2 py-3">{row.stepOrder === 1 ? "—" : formatPercent(row.fromPrevious)}</td>
-                <td className="px-2 py-3">{formatPercent(row.fromSignedUp)}</td>
+                <td className="px-2 py-3 tabular-nums">{row.users}</td>
+                <td className="px-2 py-3 tabular-nums">{formatPercent(row.ofSignedUp)}</td>
+                <td className="px-2 py-3 tabular-nums">{formatPercent(row.ofPrevious)}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <TableActions label="funnel" filename="insights-funnel.csv" rows={funnelTable(rows)} disabled={disabled} />
-    </section>
+      <TableActions label="funnel" filename="insights-funnel.csv" rows={funnelTable(rows)} />
+    </div>
+  );
+}
+
+function FunnelStack({ row }: { row: FunnelRow }) {
+  return (
+    <div className={row.largestDrop ? "rounded-md bg-warning-soft p-3" : "rounded-md border border-line p-3"}>
+      <StepLabel row={row} />
+      <dl className="mt-2 grid grid-cols-1 gap-2 text-sm min-[420px]:grid-cols-3">
+        <div>
+          <dt className="text-muted">Users</dt>
+          <dd className="tabular-nums">{row.users}</dd>
+        </div>
+        <div>
+          <dt className="text-muted">% of signed up</dt>
+          <dd className="tabular-nums">{formatPercent(row.ofSignedUp)}</dd>
+        </div>
+        <div>
+          <dt className="text-muted">% of previous step</dt>
+          <dd className="tabular-nums">{formatPercent(row.ofPrevious)}</dd>
+        </div>
+      </dl>
+      <Bar percent={row.barPercent} />
+    </div>
+  );
+}
+
+function StepLabel({ row }: { row: FunnelRow }) {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="break-words">{row.step}</span>
+      {row.largestDrop ? (
+        <span className="rounded-full border border-warning/40 bg-card px-2 py-0.5 text-xs font-semibold text-warning">
+          Largest drop
+        </span>
+      ) : null}
+    </div>
+  );
+}
+
+function Bar({ percent }: { percent: number }) {
+  return (
+    <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-background" aria-hidden="true">
+      <div className="h-full rounded-full bg-accent" style={{ width: `${percent}%` }} />
+    </div>
   );
 }
