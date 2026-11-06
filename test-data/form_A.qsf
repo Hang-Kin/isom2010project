@@ -230,7 +230,7 @@
       "SecondaryAttribute": "Enter the start date of the achievement that carries your most recent award. If that row shows a si",
       "TertiaryAttribute": null,
       "Payload": {
-        "QuestionText": "Enter the start date of the achievement that carries your most recent award. If that row shows a single date, enter that date. If it shows a range, enter the first date.",
+        "QuestionText": "Enter the start date of the achievement that carries your most recent award. If that row shows a single date, enter that date. If it shows a range, enter the first date. You may paste a date or a duration from the profile.",
         "DataExportTag": "A2",
         "DataVisibility": {
           "Private": false,
@@ -250,17 +250,7 @@
           "Settings": {
             "ForceResponse": "ON",
             "ForceResponseType": "ON",
-            "Type": "ContentType",
-            "ContentType": "ValidDate",
-            "ValidDateType": "DateWithFormat",
-            "ValidDateFormat": "dd/mm/yyyy",
-            "ValidPhoneType": "ValidUSPhone",
-            "ValidZipType": "ValidUSZip",
-            "ValidNumber": {
-              "Min": "",
-              "Max": "",
-              "NumDecimals": ""
-            }
+            "Type": "None"
           }
         },
         "SearchSource": {

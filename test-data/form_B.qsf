@@ -433,7 +433,7 @@
       "SecondaryAttribute": "Enter the end date of your most recent internship. If two internships end on different days, use th",
       "TertiaryAttribute": null,
       "Payload": {
-        "QuestionText": "Enter the end date of your most recent internship. If two internships end on different days, use the later end date. If the row shows a single date, enter that date.",
+        "QuestionText": "Enter the end date of your most recent internship. If two internships end on different days, use the later end date. If the row shows a single date, enter that date. You may paste a date or a duration from the profile.",
         "DataExportTag": "B7",
         "DataVisibility": {
           "Private": false,
@@ -453,17 +453,7 @@
           "Settings": {
             "ForceResponse": "ON",
             "ForceResponseType": "ON",
-            "Type": "ContentType",
-            "ContentType": "ValidDate",
-            "ValidDateType": "DateWithFormat",
-            "ValidDateFormat": "dd/mm/yyyy",
-            "ValidPhoneType": "ValidUSPhone",
-            "ValidZipType": "ValidUSZip",
-            "ValidNumber": {
-              "Min": "",
-              "Max": "",
-              "NumDecimals": ""
-            }
+            "Type": "None"
           }
         },
         "SearchSource": {
