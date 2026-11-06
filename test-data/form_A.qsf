@@ -25,9 +25,9 @@
       "PrimaryAttribute": "Survey Blocks",
       "SecondaryAttribute": null,
       "TertiaryAttribute": null,
-      "Payload": [
-        {
-          "Type": "Default",
+      "Payload": {
+        "1": {
+          "Type": "Standard",
           "Description": "Default Question Block",
           "ID": "BL_EvVaultFormA001",
           "BlockElements": [
@@ -79,15 +79,25 @@
               "Type": "Question",
               "QuestionID": "QID12"
             }
-          ]
+          ],
+          "SubType": "",
+          "Options": {
+            "BlockLocking": "false",
+            "RandomizeQuestions": "false",
+            "BlockVisibility": "Expanded"
+          }
         },
-        {
+        "2": {
           "Type": "Trash",
           "Description": "Trash / Unused Questions",
           "ID": "BL_EvVaultFormATrs",
-          "BlockElements": []
+          "BlockElements": [],
+          "Options": {
+            "BlockLocking": "false",
+            "RandomizeQuestions": "false"
+          }
         }
-      ]
+      }
     },
     {
       "SurveyID": "SV_EvVaultFormA001",
@@ -100,7 +110,7 @@
         "FlowID": "FL_1",
         "Flow": [
           {
-            "Type": "Block",
+            "Type": "Standard",
             "ID": "BL_EvVaultFormA001",
             "FlowID": "FL_2",
             "Autofill": []
@@ -504,10 +514,11 @@
           "Settings": {
             "ForceResponse": "ON",
             "ForceResponseType": "ON",
-            "Type": "ContentType",
-            "ContentType": "PDF"
+            "Type": "None"
           }
-        }
+        },
+        "DefaultChoices": false,
+        "GradingData": []
       }
     },
     {
@@ -572,10 +583,11 @@
           "Settings": {
             "ForceResponse": "OFF",
             "ForceResponseType": "ON",
-            "Type": "ContentType",
-            "ContentType": "PDF"
+            "Type": "None"
           }
-        }
+        },
+        "DefaultChoices": false,
+        "GradingData": []
       }
     },
     {
