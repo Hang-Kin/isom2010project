@@ -1,0 +1,657 @@
+{
+  "SurveyEntry": {
+    "SurveyID": "SV_EvVaultFormB001",
+    "SurveyName": "Evidence Vault Form B",
+    "SurveyDescription": null,
+    "SurveyOwnerID": "UR_EvVaultFormB001",
+    "SurveyBrandID": "qualtrics",
+    "DivisionID": null,
+    "SurveyLanguage": "EN",
+    "SurveyActiveResponseSet": "RS_EvVaultFormB001",
+    "SurveyStatus": "Inactive",
+    "SurveyStartDate": "0000-00-00 00:00:00",
+    "SurveyExpirationDate": "0000-00-00 00:00:00",
+    "SurveyCreationDate": "2026-11-06 12:00:00",
+    "CreatorID": "UR_EvVaultFormB001",
+    "LastModified": "2026-11-06 12:00:00",
+    "LastAccessed": "0000-00-00 00:00:00",
+    "LastActivated": "0000-00-00 00:00:00",
+    "Deleted": null
+  },
+  "SurveyElements": [
+    {
+      "SurveyID": "SV_EvVaultFormB001",
+      "Element": "BL",
+      "PrimaryAttribute": "Survey Blocks",
+      "SecondaryAttribute": null,
+      "TertiaryAttribute": null,
+      "Payload": [
+        {
+          "Type": "Default",
+          "Description": "Default Question Block",
+          "ID": "BL_EvVaultFormB001",
+          "BlockElements": [
+            {
+              "Type": "Question",
+              "QuestionID": "QID1"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID2"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID3"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID4"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID5"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID6"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID7"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID8"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID9"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID10"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID11"
+            },
+            {
+              "Type": "Question",
+              "QuestionID": "QID12"
+            }
+          ]
+        },
+        {
+          "Type": "Trash",
+          "Description": "Trash / Unused Questions",
+          "ID": "BL_EvVaultFormBTrs",
+          "BlockElements": []
+        }
+      ]
+    },
+    {
+      "SurveyID": "SV_EvVaultFormB001",
+      "Element": "FL",
+      "PrimaryAttribute": "Survey Flow",
+      "SecondaryAttribute": null,
+      "TertiaryAttribute": null,
+      "Payload": {
+        "Type": "Root",
+        "FlowID": "FL_1",
+        "Flow": [
+          {
+            "Type": "Block",
+            "ID": "BL_EvVaultFormB001",
+            "FlowID": "FL_2",
+            "Autofill": []
+          }
+        ],
+        "Properties": {
+          "Count": 2
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormB001",
+      "Element": "PROJ",
+      "PrimaryAttribute": "CORE",
+      "SecondaryAttribute": null,
+      "TertiaryAttribute": "1.1.0",
+      "Payload": {
+        "ProjectCategory": "CORE",
+        "SchemaVersion": "1.1.0"
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormB001",
+      "Element": "QC",
+      "PrimaryAttribute": "Survey Question Count",
+      "SecondaryAttribute": "12",
+      "TertiaryAttribute": null,
+      "Payload": null
+    },
+    {
+      "SurveyID": "SV_EvVaultFormB001",
+      "Element": "RS",
+      "PrimaryAttribute": "RS_EvVaultFormB001",
+      "SecondaryAttribute": "Default Response Set",
+      "TertiaryAttribute": null,
+      "Payload": null
+    },
+    {
+      "SurveyID": "SV_EvVaultFormB001",
+      "Element": "SCO",
+      "PrimaryAttribute": "Scoring",
+      "SecondaryAttribute": null,
+      "TertiaryAttribute": null,
+      "Payload": {
+        "ScoringCategories": [],
+        "ScoringCategoryGroups": [],
+        "ScoringSummaryCategory": null,
+        "ScoringSummaryAfterQuestions": 0,
+        "ScoringSummaryAfterSurvey": 0,
+        "DefaultScoringCategory": null,
+        "AutoScoringCategory": null
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormB001",
+      "Element": "SO",
+      "PrimaryAttribute": "Survey Options",
+      "SecondaryAttribute": null,
+      "TertiaryAttribute": null,
+      "Payload": {
+        "BackButton": "false",
+        "SaveAndContinue": "true",
+        "SurveyProtection": "PublicSurvey",
+        "BallotBoxStuffingPrevention": "false",
+        "NoIndex": "Yes",
+        "SecureResponseFiles": "true",
+        "SurveyExpiration": "None",
+        "SurveyTermination": "DefaultMessage",
+        "Header": "",
+        "Footer": "",
+        "ProgressBarDisplay": "None",
+        "PartialData": "+1 week",
+        "ValidationMessage": "",
+        "PreviousButton": "",
+        "NextButton": "",
+        "SurveyTitle": "Evidence Vault Form B",
+        "SkinLibrary": "qualtrics",
+        "SkinType": "templated",
+        "Skin": {
+          "brandingId": null,
+          "templateId": "*base",
+          "overrides": null
+        },
+        "NewScoring": 1,
+        "SurveyMetaDescription": ""
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormB001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID1",
+      "SecondaryAttribute": "List every volunteering achievement. For each, write the item name, organizer, dates, role, and hou",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "List every volunteering achievement. For each, write the item name, organizer, dates, role, and hours served. If none, write N/A.",
+        "DataExportTag": "B1",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "List every volunteering achievement. For each, write the item name, organizer, dates, role, and hou",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID1",
+        "QuestionType": "TE",
+        "Selector": "SL",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "None"
+          }
+        },
+        "SearchSource": {
+          "AllowFreeResponse": "false"
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormB001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID2",
+      "SecondaryAttribute": "Add the hours served on every volunteering row in your bank. Enter the total as a whole number. Do ",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "Add the hours served on every volunteering row in your bank. Enter the total as a whole number. Do not add rows whose hours are N/A.",
+        "DataExportTag": "B2",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "Add the hours served on every volunteering row in your bank. Enter the total as a whole number. Do ",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID2",
+        "QuestionType": "TE",
+        "Selector": "SL",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "ContentType",
+            "ContentType": "ValidNumber",
+            "ValidDateType": "DateWithFormat",
+            "ValidPhoneType": "ValidUSPhone",
+            "ValidZipType": "ValidUSZip",
+            "ValidNumber": {
+              "Min": "0",
+              "Max": "",
+              "NumDecimals": "0"
+            }
+          }
+        },
+        "SearchSource": {
+          "AllowFreeResponse": "false"
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormB001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID3",
+      "SecondaryAttribute": "From your volunteering rows, list only those whose dates overlap 6 November 2024 to 6 November 2026",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "From your volunteering rows, list only those whose dates overlap 6 November 2024 to 6 November 2026. For each, write the item name, organizer, and hours served. A row that started before 6 November 2024 and ended on or after that date still counts. If none, write N/A.",
+        "DataExportTag": "B3",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "From your volunteering rows, list only those whose dates overlap 6 November 2024 to 6 November 2026",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID3",
+        "QuestionType": "TE",
+        "Selector": "SL",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "None"
+          }
+        },
+        "SearchSource": {
+          "AllowFreeResponse": "false"
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormB001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID4",
+      "SecondaryAttribute": "List your 5 most recent volunteering roles. For each, write the role and the organizer. If you have",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "List your 5 most recent volunteering roles. For each, write the role and the organizer. If you have fewer than 5, list every volunteering role you have. If none, write N/A.",
+        "DataExportTag": "B4",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "List your 5 most recent volunteering roles. For each, write the role and the organizer. If you have",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID4",
+        "QuestionType": "TE",
+        "Selector": "SL",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "None"
+          }
+        },
+        "SearchSource": {
+          "AllowFreeResponse": "false"
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormB001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID5",
+      "SecondaryAttribute": "Which volunteering item would you feature first on a community-service bursary?",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "Which volunteering item would you feature first on a community-service bursary?",
+        "DataExportTag": "B5",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "Which volunteering item would you feature first on a community-service bursary?",
+        "Language": [],
+        "NextChoiceId": 5,
+        "NextAnswerId": 1,
+        "QuestionID": "QID5",
+        "QuestionType": "MC",
+        "Selector": "DL",
+        "SubSelector": "TX",
+        "Choices": {
+          "1": {
+            "Display": "The volunteering item with the most hours"
+          },
+          "2": {
+            "Display": "The volunteering item with the latest end date"
+          },
+          "3": {
+            "Display": "The volunteering item where my role was the most responsible"
+          },
+          "4": {
+            "Display": "I have no volunteering item"
+          }
+        },
+        "ChoiceOrder": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "None"
+          }
+        },
+        "DynamicChoicesData": []
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormB001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID6",
+      "SecondaryAttribute": "List up to 2 internships that best match work you might do after university. Any date is allowed; d",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "List up to 2 internships that best match work you might do after university. Any date is allowed; do not apply the last-2-years window. If you have more than 2, list the 2 with the latest end dates. For each, write the item name, organizer, dates, and role. If none, write N/A.",
+        "DataExportTag": "B6",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "List up to 2 internships that best match work you might do after university. Any date is allowed; d",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID6",
+        "QuestionType": "TE",
+        "Selector": "SL",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "None"
+          }
+        },
+        "SearchSource": {
+          "AllowFreeResponse": "false"
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormB001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID7",
+      "SecondaryAttribute": "Enter the end date of your most recent internship. If two internships end on different days, use th",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "Enter the end date of your most recent internship. If two internships end on different days, use the later end date. If the row shows a single date, enter that date.",
+        "DataExportTag": "B7",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "Enter the end date of your most recent internship. If two internships end on different days, use th",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID7",
+        "QuestionType": "TE",
+        "Selector": "SL",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "ContentType",
+            "ContentType": "ValidDate",
+            "ValidDateType": "DateWithFormat",
+            "ValidDateFormat": "dd/mm/yyyy",
+            "ValidPhoneType": "ValidUSPhone",
+            "ValidZipType": "ValidUSZip",
+            "ValidNumber": {
+              "Min": "",
+              "Max": "",
+              "NumDecimals": ""
+            }
+          }
+        },
+        "SearchSource": {
+          "AllowFreeResponse": "false"
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormB001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID8",
+      "SecondaryAttribute": "Choose your 2 strongest activities for community service or career relevance. Name each item and ex",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "Choose your 2 strongest activities for community service or career relevance. Name each item and explain why you chose it, in about 80 words for both together. If you have fewer than 2, explain the ones you have. If none, write N/A.",
+        "DataExportTag": "B8",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "Choose your 2 strongest activities for community service or career relevance. Name each item and ex",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID8",
+        "QuestionType": "TE",
+        "Selector": "ESTB",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "None"
+          }
+        },
+        "SearchSource": {
+          "AllowFreeResponse": "false"
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormB001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID9",
+      "SecondaryAttribute": "Upload the evidence file for the volunteering item with the most hours served. If two volunteering ",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "Upload the evidence file for the volunteering item with the most hours served. If two volunteering items tie on hours, upload the one with the later end date.",
+        "DataExportTag": "B9",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "Upload the evidence file for the volunteering item with the most hours served. If two volunteering ",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID9",
+        "QuestionType": "FileUpload",
+        "Selector": "FileUpload",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "ContentType",
+            "ContentType": "PDF"
+          }
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormB001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID10",
+      "SecondaryAttribute": "For the volunteering item you used in B9, write the item name, the hours served, the award received",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "For the volunteering item you used in B9, write the item name, the hours served, the award received, the year of award, and the description. Copy None or N/A when that is what the bank says.",
+        "DataExportTag": "B10",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "For the volunteering item you used in B9, write the item name, the hours served, the award received",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID10",
+        "QuestionType": "TE",
+        "Selector": "SL",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "None"
+          }
+        },
+        "SearchSource": {
+          "AllowFreeResponse": "false"
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormB001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID11",
+      "SecondaryAttribute": "Upload the evidence file for the internship you would cite first for career relevance. If you liste",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "Upload the evidence file for the internship you would cite first for career relevance. If you listed two internships in B6, use the one you would rather a reviewer read.",
+        "DataExportTag": "B11",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "Upload the evidence file for the internship you would cite first for career relevance. If you liste",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID11",
+        "QuestionType": "FileUpload",
+        "Selector": "FileUpload",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "ContentType",
+            "ContentType": "PDF"
+          }
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormB001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID12",
+      "SecondaryAttribute": "In 100–150 words, describe the community impact of your service. Use at least one volunteering item",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "In 100–150 words, describe the community impact of your service. Use at least one volunteering item: name it, name the organizer, and include the hours served, drawing only on the description. If you have no volunteering item, describe the career relevance of one internship instead. If none, write N/A.",
+        "DataExportTag": "B12",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "In 100–150 words, describe the community impact of your service. Use at least one volunteering item",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID12",
+        "QuestionType": "TE",
+        "Selector": "ESTB",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "None"
+          }
+        },
+        "SearchSource": {
+          "AllowFreeResponse": "false"
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFormB001",
+      "Element": "STAT",
+      "PrimaryAttribute": "Survey Statistics",
+      "SecondaryAttribute": null,
+      "TertiaryAttribute": null,
+      "Payload": {
+        "MobileCompatible": true,
+        "ID": "Survey Statistics"
+      }
+    }
+  ]
+}
