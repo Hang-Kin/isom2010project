@@ -134,14 +134,6 @@
             {
               "Type": "Question",
               "QuestionID": "QID16"
-            },
-            {
-              "Type": "Question",
-              "QuestionID": "QID17"
-            },
-            {
-              "Type": "Question",
-              "QuestionID": "QID18"
             }
           ],
           "Options": {
@@ -158,7 +150,7 @@
           "BlockElements": [
             {
               "Type": "Question",
-              "QuestionID": "QID19"
+              "QuestionID": "QID17"
             }
           ],
           "Options": {
@@ -175,7 +167,7 @@
           "BlockElements": [
             {
               "Type": "Question",
-              "QuestionID": "QID20"
+              "QuestionID": "QID18"
             }
           ],
           "Options": {
@@ -263,7 +255,7 @@
       "SurveyID": "SV_EvVaultFrmA0001",
       "Element": "QC",
       "PrimaryAttribute": "Survey Question Count",
-      "SecondaryAttribute": "20",
+      "SecondaryAttribute": "18",
       "TertiaryAttribute": null,
       "Payload": null
     },
@@ -946,10 +938,10 @@
       "SurveyID": "SV_EvVaultFrmA0001",
       "Element": "SQ",
       "PrimaryAttribute": "QID12",
-      "SecondaryAttribute": "Volunteering item you would cite first. Enter the item name and the date or duration.",
+      "SecondaryAttribute": "First volunteering item. Enter the work name, the duration, and a short description of the work. En",
       "TertiaryAttribute": null,
       "Payload": {
-        "QuestionText": "Volunteering item you would cite first. Enter the item name and the date or duration.",
+        "QuestionText": "First volunteering item. Enter the work name, the duration, and a short description of the work. Enter the hours in the next question.",
         "DataExportTag": "A_Vol1",
         "DataVisibility": {
           "Private": false,
@@ -958,24 +950,28 @@
         "Configuration": {
           "QuestionDescriptionOption": "UseText"
         },
-        "QuestionDescription": "Volunteering item you would cite first. Enter the item name and the date or duration.",
+        "QuestionDescription": "First volunteering item. Enter the work name, the duration, and a short description of the work. En",
         "Language": [],
-        "NextChoiceId": 3,
+        "NextChoiceId": 4,
         "NextAnswerId": 1,
         "QuestionID": "QID12",
         "QuestionType": "TE",
         "Selector": "FORM",
         "Choices": {
           "1": {
-            "Display": "Item name"
+            "Display": "Work name"
           },
           "2": {
-            "Display": "Date or duration (for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026)"
+            "Display": "Duration (for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026)"
+          },
+          "3": {
+            "Display": "Short description of the work"
           }
         },
         "ChoiceOrder": [
           "1",
-          "2"
+          "2",
+          "3"
         ],
         "Validation": {
           "Settings": {
@@ -1037,45 +1033,10 @@
       "SurveyID": "SV_EvVaultFrmA0001",
       "Element": "SQ",
       "PrimaryAttribute": "QID14",
-      "SecondaryAttribute": "In a few sentences, what did you do in that first volunteering role?",
+      "SecondaryAttribute": "Second volunteering item. Enter the work name, the duration, and a short description of the work. E",
       "TertiaryAttribute": null,
       "Payload": {
-        "QuestionText": "In a few sentences, what did you do in that first volunteering role?",
-        "DataExportTag": "A_Vol1Note",
-        "DataVisibility": {
-          "Private": false,
-          "Hidden": false
-        },
-        "Configuration": {
-          "QuestionDescriptionOption": "UseText"
-        },
-        "QuestionDescription": "In a few sentences, what did you do in that first volunteering role?",
-        "Language": [],
-        "NextChoiceId": 1,
-        "NextAnswerId": 1,
-        "QuestionID": "QID14",
-        "QuestionType": "TE",
-        "Selector": "ML",
-        "Validation": {
-          "Settings": {
-            "ForceResponse": "ON",
-            "ForceResponseType": "ON",
-            "Type": "None"
-          }
-        },
-        "SearchSource": {
-          "AllowFreeResponse": "false"
-        }
-      }
-    },
-    {
-      "SurveyID": "SV_EvVaultFrmA0001",
-      "Element": "SQ",
-      "PrimaryAttribute": "QID15",
-      "SecondaryAttribute": "A second volunteering item. Enter the item name and the date or duration.",
-      "TertiaryAttribute": null,
-      "Payload": {
-        "QuestionText": "A second volunteering item. Enter the item name and the date or duration.",
+        "QuestionText": "Second volunteering item. Enter the work name, the duration, and a short description of the work. Enter the hours in the next question.",
         "DataExportTag": "A_Vol2",
         "DataVisibility": {
           "Private": false,
@@ -1084,24 +1045,28 @@
         "Configuration": {
           "QuestionDescriptionOption": "UseText"
         },
-        "QuestionDescription": "A second volunteering item. Enter the item name and the date or duration.",
+        "QuestionDescription": "Second volunteering item. Enter the work name, the duration, and a short description of the work. E",
         "Language": [],
-        "NextChoiceId": 3,
+        "NextChoiceId": 4,
         "NextAnswerId": 1,
-        "QuestionID": "QID15",
+        "QuestionID": "QID14",
         "QuestionType": "TE",
         "Selector": "FORM",
         "Choices": {
           "1": {
-            "Display": "Item name"
+            "Display": "Work name"
           },
           "2": {
-            "Display": "Date or duration (for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026)"
+            "Display": "Duration (for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026)"
+          },
+          "3": {
+            "Display": "Short description of the work"
           }
         },
         "ChoiceOrder": [
           "1",
-          "2"
+          "2",
+          "3"
         ],
         "Validation": {
           "Settings": {
@@ -1118,7 +1083,7 @@
     {
       "SurveyID": "SV_EvVaultFrmA0001",
       "Element": "SQ",
-      "PrimaryAttribute": "QID16",
+      "PrimaryAttribute": "QID15",
       "SecondaryAttribute": "Hours served on that second volunteering item. Enter a whole number.",
       "TertiaryAttribute": null,
       "Payload": {
@@ -1132,6 +1097,50 @@
           "QuestionDescriptionOption": "UseText"
         },
         "QuestionDescription": "Hours served on that second volunteering item. Enter a whole number.",
+        "Language": [],
+        "NextChoiceId": 1,
+        "NextAnswerId": 1,
+        "QuestionID": "QID15",
+        "QuestionType": "TE",
+        "Selector": "SL",
+        "Validation": {
+          "Settings": {
+            "ForceResponse": "ON",
+            "ForceResponseType": "ON",
+            "Type": "ContentType",
+            "ContentType": "ValidNumber",
+            "ValidDateType": "DateWithFormat",
+            "ValidPhoneType": "ValidUSPhone",
+            "ValidZipType": "ValidUSZip",
+            "ValidNumber": {
+              "Min": "0",
+              "Max": "",
+              "NumDecimals": "0"
+            }
+          }
+        },
+        "SearchSource": {
+          "AllowFreeResponse": "false"
+        }
+      }
+    },
+    {
+      "SurveyID": "SV_EvVaultFrmA0001",
+      "Element": "SQ",
+      "PrimaryAttribute": "QID16",
+      "SecondaryAttribute": "Total hours served on every volunteering item in your record. Enter a whole number. Do not add a ro",
+      "TertiaryAttribute": null,
+      "Payload": {
+        "QuestionText": "Total hours served on every volunteering item in your record. Enter a whole number. Do not add a row whose hours are not a number.",
+        "DataExportTag": "A_VolTotal",
+        "DataVisibility": {
+          "Private": false,
+          "Hidden": false
+        },
+        "Configuration": {
+          "QuestionDescriptionOption": "UseText"
+        },
+        "QuestionDescription": "Total hours served on every volunteering item in your record. Enter a whole number. Do not add a ro",
         "Language": [],
         "NextChoiceId": 1,
         "NextAnswerId": 1,
@@ -1163,85 +1172,6 @@
       "SurveyID": "SV_EvVaultFrmA0001",
       "Element": "SQ",
       "PrimaryAttribute": "QID17",
-      "SecondaryAttribute": "In a few sentences, what did you do in that second volunteering role?",
-      "TertiaryAttribute": null,
-      "Payload": {
-        "QuestionText": "In a few sentences, what did you do in that second volunteering role?",
-        "DataExportTag": "A_Vol2Note",
-        "DataVisibility": {
-          "Private": false,
-          "Hidden": false
-        },
-        "Configuration": {
-          "QuestionDescriptionOption": "UseText"
-        },
-        "QuestionDescription": "In a few sentences, what did you do in that second volunteering role?",
-        "Language": [],
-        "NextChoiceId": 1,
-        "NextAnswerId": 1,
-        "QuestionID": "QID17",
-        "QuestionType": "TE",
-        "Selector": "ML",
-        "Validation": {
-          "Settings": {
-            "ForceResponse": "ON",
-            "ForceResponseType": "ON",
-            "Type": "None"
-          }
-        },
-        "SearchSource": {
-          "AllowFreeResponse": "false"
-        }
-      }
-    },
-    {
-      "SurveyID": "SV_EvVaultFrmA0001",
-      "Element": "SQ",
-      "PrimaryAttribute": "QID18",
-      "SecondaryAttribute": "Total hours served on every volunteering item in your record. Enter a whole number. Do not add a ro",
-      "TertiaryAttribute": null,
-      "Payload": {
-        "QuestionText": "Total hours served on every volunteering item in your record. Enter a whole number. Do not add a row whose hours are not a number.",
-        "DataExportTag": "A_VolTotal",
-        "DataVisibility": {
-          "Private": false,
-          "Hidden": false
-        },
-        "Configuration": {
-          "QuestionDescriptionOption": "UseText"
-        },
-        "QuestionDescription": "Total hours served on every volunteering item in your record. Enter a whole number. Do not add a ro",
-        "Language": [],
-        "NextChoiceId": 1,
-        "NextAnswerId": 1,
-        "QuestionID": "QID18",
-        "QuestionType": "TE",
-        "Selector": "SL",
-        "Validation": {
-          "Settings": {
-            "ForceResponse": "ON",
-            "ForceResponseType": "ON",
-            "Type": "ContentType",
-            "ContentType": "ValidNumber",
-            "ValidDateType": "DateWithFormat",
-            "ValidPhoneType": "ValidUSPhone",
-            "ValidZipType": "ValidUSZip",
-            "ValidNumber": {
-              "Min": "0",
-              "Max": "",
-              "NumDecimals": "0"
-            }
-          }
-        },
-        "SearchSource": {
-          "AllowFreeResponse": "false"
-        }
-      }
-    },
-    {
-      "SurveyID": "SV_EvVaultFrmA0001",
-      "Element": "SQ",
-      "PrimaryAttribute": "QID19",
       "SecondaryAttribute": "In 100-150 words, say what you would do with the Kite & Quill Academic Scholarship. Tie your answer",
       "TertiaryAttribute": null,
       "Payload": {
@@ -1258,7 +1188,7 @@
         "Language": [],
         "NextChoiceId": 1,
         "NextAnswerId": 1,
-        "QuestionID": "QID19",
+        "QuestionID": "QID17",
         "QuestionType": "TE",
         "Selector": "ESTB",
         "Validation": {
@@ -1276,7 +1206,7 @@
     {
       "SurveyID": "SV_EvVaultFrmA0001",
       "Element": "SQ",
-      "PrimaryAttribute": "QID20",
+      "PrimaryAttribute": "QID18",
       "SecondaryAttribute": "Upload one PDF that contains the evidence for the items you used on this application.",
       "TertiaryAttribute": null,
       "Payload": {
@@ -1293,7 +1223,7 @@
         "Language": [],
         "NextChoiceId": 1,
         "NextAnswerId": 1,
-        "QuestionID": "QID20",
+        "QuestionID": "QID18",
         "QuestionType": "FileUpload",
         "Selector": "FileUpload",
         "Validation": {

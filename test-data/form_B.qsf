@@ -134,22 +134,6 @@
             {
               "Type": "Question",
               "QuestionID": "QID16"
-            },
-            {
-              "Type": "Question",
-              "QuestionID": "QID17"
-            },
-            {
-              "Type": "Question",
-              "QuestionID": "QID18"
-            },
-            {
-              "Type": "Question",
-              "QuestionID": "QID19"
-            },
-            {
-              "Type": "Question",
-              "QuestionID": "QID20"
             }
           ],
           "Options": {
@@ -166,7 +150,7 @@
           "BlockElements": [
             {
               "Type": "Question",
-              "QuestionID": "QID21"
+              "QuestionID": "QID17"
             }
           ],
           "Options": {
@@ -183,7 +167,7 @@
           "BlockElements": [
             {
               "Type": "Question",
-              "QuestionID": "QID22"
+              "QuestionID": "QID18"
             }
           ],
           "Options": {
@@ -271,7 +255,7 @@
       "SurveyID": "SV_EvVaultFrmB0001",
       "Element": "QC",
       "PrimaryAttribute": "Survey Question Count",
-      "SecondaryAttribute": "22",
+      "SecondaryAttribute": "18",
       "TertiaryAttribute": null,
       "Payload": null
     },
@@ -939,11 +923,11 @@
       "SurveyID": "SV_EvVaultFrmB0001",
       "Element": "SQ",
       "PrimaryAttribute": "QID12",
-      "SecondaryAttribute": "Short account of that first volunteering item: what you did, and for whom.",
+      "SecondaryAttribute": "For that same volunteering item, enter the duration, a short description of the work, and the work ",
       "TertiaryAttribute": null,
       "Payload": {
-        "QuestionText": "Short account of that first volunteering item: what you did, and for whom.",
-        "DataExportTag": "B_Vol1Note",
+        "QuestionText": "For that same volunteering item, enter the duration, a short description of the work, and the work name.",
+        "DataExportTag": "B_Vol1",
         "DataVisibility": {
           "Private": false,
           "Hidden": false
@@ -951,13 +935,29 @@
         "Configuration": {
           "QuestionDescriptionOption": "UseText"
         },
-        "QuestionDescription": "Short account of that first volunteering item: what you did, and for whom.",
+        "QuestionDescription": "For that same volunteering item, enter the duration, a short description of the work, and the work ",
         "Language": [],
-        "NextChoiceId": 1,
+        "NextChoiceId": 4,
         "NextAnswerId": 1,
         "QuestionID": "QID12",
         "QuestionType": "TE",
-        "Selector": "ML",
+        "Selector": "FORM",
+        "Choices": {
+          "1": {
+            "Display": "Duration (for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026)"
+          },
+          "2": {
+            "Display": "Short description of the work"
+          },
+          "3": {
+            "Display": "Work name"
+          }
+        },
+        "ChoiceOrder": [
+          "1",
+          "2",
+          "3"
+        ],
         "Validation": {
           "Settings": {
             "ForceResponse": "ON",
@@ -974,53 +974,6 @@
       "SurveyID": "SV_EvVaultFrmB0001",
       "Element": "SQ",
       "PrimaryAttribute": "QID13",
-      "SecondaryAttribute": "Name that first volunteering item and give its date or duration. Put the dates in the first box.",
-      "TertiaryAttribute": null,
-      "Payload": {
-        "QuestionText": "Name that first volunteering item and give its date or duration. Put the dates in the first box.",
-        "DataExportTag": "B_Vol1",
-        "DataVisibility": {
-          "Private": false,
-          "Hidden": false
-        },
-        "Configuration": {
-          "QuestionDescriptionOption": "UseText"
-        },
-        "QuestionDescription": "Name that first volunteering item and give its date or duration. Put the dates in the first box.",
-        "Language": [],
-        "NextChoiceId": 3,
-        "NextAnswerId": 1,
-        "QuestionID": "QID13",
-        "QuestionType": "TE",
-        "Selector": "FORM",
-        "Choices": {
-          "1": {
-            "Display": "Date or duration (for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026)"
-          },
-          "2": {
-            "Display": "Item name"
-          }
-        },
-        "ChoiceOrder": [
-          "1",
-          "2"
-        ],
-        "Validation": {
-          "Settings": {
-            "ForceResponse": "ON",
-            "ForceResponseType": "ON",
-            "Type": "None"
-          }
-        },
-        "SearchSource": {
-          "AllowFreeResponse": "false"
-        }
-      }
-    },
-    {
-      "SurveyID": "SV_EvVaultFrmB0001",
-      "Element": "SQ",
-      "PrimaryAttribute": "QID14",
       "SecondaryAttribute": "Hours served on a second volunteering item. Enter a whole number.",
       "TertiaryAttribute": null,
       "Payload": {
@@ -1037,7 +990,7 @@
         "Language": [],
         "NextChoiceId": 1,
         "NextAnswerId": 1,
-        "QuestionID": "QID14",
+        "QuestionID": "QID13",
         "QuestionType": "TE",
         "Selector": "SL",
         "Validation": {
@@ -1064,46 +1017,11 @@
     {
       "SurveyID": "SV_EvVaultFrmB0001",
       "Element": "SQ",
-      "PrimaryAttribute": "QID15",
-      "SecondaryAttribute": "Short account of that second volunteering item: what you did, and for whom.",
+      "PrimaryAttribute": "QID14",
+      "SecondaryAttribute": "For that second item, enter the duration, a short description of the work, and the work name.",
       "TertiaryAttribute": null,
       "Payload": {
-        "QuestionText": "Short account of that second volunteering item: what you did, and for whom.",
-        "DataExportTag": "B_Vol2Note",
-        "DataVisibility": {
-          "Private": false,
-          "Hidden": false
-        },
-        "Configuration": {
-          "QuestionDescriptionOption": "UseText"
-        },
-        "QuestionDescription": "Short account of that second volunteering item: what you did, and for whom.",
-        "Language": [],
-        "NextChoiceId": 1,
-        "NextAnswerId": 1,
-        "QuestionID": "QID15",
-        "QuestionType": "TE",
-        "Selector": "ML",
-        "Validation": {
-          "Settings": {
-            "ForceResponse": "ON",
-            "ForceResponseType": "ON",
-            "Type": "None"
-          }
-        },
-        "SearchSource": {
-          "AllowFreeResponse": "false"
-        }
-      }
-    },
-    {
-      "SurveyID": "SV_EvVaultFrmB0001",
-      "Element": "SQ",
-      "PrimaryAttribute": "QID16",
-      "SecondaryAttribute": "Name that second volunteering item and give its date or duration. Put the dates in the first box.",
-      "TertiaryAttribute": null,
-      "Payload": {
-        "QuestionText": "Name that second volunteering item and give its date or duration. Put the dates in the first box.",
+        "QuestionText": "For that second item, enter the duration, a short description of the work, and the work name.",
         "DataExportTag": "B_Vol2",
         "DataVisibility": {
           "Private": false,
@@ -1112,24 +1030,28 @@
         "Configuration": {
           "QuestionDescriptionOption": "UseText"
         },
-        "QuestionDescription": "Name that second volunteering item and give its date or duration. Put the dates in the first box.",
+        "QuestionDescription": "For that second item, enter the duration, a short description of the work, and the work name.",
         "Language": [],
-        "NextChoiceId": 3,
+        "NextChoiceId": 4,
         "NextAnswerId": 1,
-        "QuestionID": "QID16",
+        "QuestionID": "QID14",
         "QuestionType": "TE",
         "Selector": "FORM",
         "Choices": {
           "1": {
-            "Display": "Date or duration (for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026)"
+            "Display": "Duration (for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026)"
           },
           "2": {
-            "Display": "Item name"
+            "Display": "Short description of the work"
+          },
+          "3": {
+            "Display": "Work name"
           }
         },
         "ChoiceOrder": [
           "1",
-          "2"
+          "2",
+          "3"
         ],
         "Validation": {
           "Settings": {
@@ -1146,86 +1068,7 @@
     {
       "SurveyID": "SV_EvVaultFrmB0001",
       "Element": "SQ",
-      "PrimaryAttribute": "QID17",
-      "SecondaryAttribute": "Hours served on a third volunteering item, if you have one. Enter a whole number. If none, leave th",
-      "TertiaryAttribute": null,
-      "Payload": {
-        "QuestionText": "Hours served on a third volunteering item, if you have one. Enter a whole number. If none, leave this blank.",
-        "DataExportTag": "B_Vol3Hrs",
-        "DataVisibility": {
-          "Private": false,
-          "Hidden": false
-        },
-        "Configuration": {
-          "QuestionDescriptionOption": "UseText"
-        },
-        "QuestionDescription": "Hours served on a third volunteering item, if you have one. Enter a whole number. If none, leave th",
-        "Language": [],
-        "NextChoiceId": 1,
-        "NextAnswerId": 1,
-        "QuestionID": "QID17",
-        "QuestionType": "TE",
-        "Selector": "SL",
-        "Validation": {
-          "Settings": {
-            "ForceResponse": "OFF",
-            "ForceResponseType": "ON",
-            "Type": "ContentType",
-            "ContentType": "ValidNumber",
-            "ValidDateType": "DateWithFormat",
-            "ValidPhoneType": "ValidUSPhone",
-            "ValidZipType": "ValidUSZip",
-            "ValidNumber": {
-              "Min": "0",
-              "Max": "",
-              "NumDecimals": "0"
-            }
-          }
-        },
-        "SearchSource": {
-          "AllowFreeResponse": "false"
-        }
-      }
-    },
-    {
-      "SurveyID": "SV_EvVaultFrmB0001",
-      "Element": "SQ",
-      "PrimaryAttribute": "QID18",
-      "SecondaryAttribute": "Short account of that third volunteering item. If none, write N/A.",
-      "TertiaryAttribute": null,
-      "Payload": {
-        "QuestionText": "Short account of that third volunteering item. If none, write N/A.",
-        "DataExportTag": "B_Vol3Note",
-        "DataVisibility": {
-          "Private": false,
-          "Hidden": false
-        },
-        "Configuration": {
-          "QuestionDescriptionOption": "UseText"
-        },
-        "QuestionDescription": "Short account of that third volunteering item. If none, write N/A.",
-        "Language": [],
-        "NextChoiceId": 1,
-        "NextAnswerId": 1,
-        "QuestionID": "QID18",
-        "QuestionType": "TE",
-        "Selector": "ML",
-        "Validation": {
-          "Settings": {
-            "ForceResponse": "OFF",
-            "ForceResponseType": "ON",
-            "Type": "None"
-          }
-        },
-        "SearchSource": {
-          "AllowFreeResponse": "false"
-        }
-      }
-    },
-    {
-      "SurveyID": "SV_EvVaultFrmB0001",
-      "Element": "SQ",
-      "PrimaryAttribute": "QID19",
+      "PrimaryAttribute": "QID15",
       "SecondaryAttribute": "A third volunteering item, if you have one. If none, write N/A in each box.",
       "TertiaryAttribute": null,
       "Payload": {
@@ -1240,22 +1083,30 @@
         },
         "QuestionDescription": "A third volunteering item, if you have one. If none, write N/A in each box.",
         "Language": [],
-        "NextChoiceId": 3,
+        "NextChoiceId": 5,
         "NextAnswerId": 1,
-        "QuestionID": "QID19",
+        "QuestionID": "QID15",
         "QuestionType": "TE",
         "Selector": "FORM",
         "Choices": {
           "1": {
-            "Display": "Date or duration (for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026)"
+            "Display": "Duration (for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026)"
           },
           "2": {
-            "Display": "Item name"
+            "Display": "Hours (a whole number, or N/A)"
+          },
+          "3": {
+            "Display": "Work name"
+          },
+          "4": {
+            "Display": "Short description of the work"
           }
         },
         "ChoiceOrder": [
           "1",
-          "2"
+          "2",
+          "3",
+          "4"
         ],
         "Validation": {
           "Settings": {
@@ -1272,7 +1123,7 @@
     {
       "SurveyID": "SV_EvVaultFrmB0001",
       "Element": "SQ",
-      "PrimaryAttribute": "QID20",
+      "PrimaryAttribute": "QID16",
       "SecondaryAttribute": "Total volunteering hours. Add every volunteering row that has a number of hours, and enter that who",
       "TertiaryAttribute": null,
       "Payload": {
@@ -1289,7 +1140,7 @@
         "Language": [],
         "NextChoiceId": 1,
         "NextAnswerId": 1,
-        "QuestionID": "QID20",
+        "QuestionID": "QID16",
         "QuestionType": "TE",
         "Selector": "SL",
         "Validation": {
@@ -1316,7 +1167,7 @@
     {
       "SurveyID": "SV_EvVaultFrmB0001",
       "Element": "SQ",
-      "PrimaryAttribute": "QID21",
+      "PrimaryAttribute": "QID17",
       "SecondaryAttribute": "In 100-150 words, explain why you want the Open Desk Community Bursary and the kind of work you hop",
       "TertiaryAttribute": null,
       "Payload": {
@@ -1333,7 +1184,7 @@
         "Language": [],
         "NextChoiceId": 1,
         "NextAnswerId": 1,
-        "QuestionID": "QID21",
+        "QuestionID": "QID17",
         "QuestionType": "TE",
         "Selector": "ESTB",
         "Validation": {
@@ -1351,7 +1202,7 @@
     {
       "SurveyID": "SV_EvVaultFrmB0001",
       "Element": "SQ",
-      "PrimaryAttribute": "QID22",
+      "PrimaryAttribute": "QID18",
       "SecondaryAttribute": "Upload one PDF with the evidence for the volunteering and the experience you cited above.",
       "TertiaryAttribute": null,
       "Payload": {
@@ -1368,7 +1219,7 @@
         "Language": [],
         "NextChoiceId": 1,
         "NextAnswerId": 1,
-        "QuestionID": "QID22",
+        "QuestionID": "QID18",
         "QuestionType": "FileUpload",
         "Selector": "FileUpload",
         "Validation": {

@@ -9,7 +9,7 @@ Import each file in Qualtrics with Tools → Import survey, or Create survey →
 
 Dates and durations are typed as they appear in the profile, for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026. Those boxes are single-line text, including the date box inside a form question. They do not use date validation.
 
-Where a profile may have nothing that fits, the question says “If none, write N/A” and is not required. The one exception is a third volunteering hours box on Form B: that box only accepts a whole number, so the question says to leave it blank instead of typing N/A.
+Where a profile may have nothing that fits, the question says “If none, write N/A” and is not required. A form box cannot check that hours are a whole number, so each required volunteering item asks for hours in the next or previous question. That question accepts a whole number, minimum 0. Form B’s third volunteering item is optional and keeps hours in the form, so the student can write N/A.
 
 Every profile can answer the required questions. Each profile has a name, year of study, major, and GPA; exactly one award; at least one internship and a second activity that is an internship, competition, workshop, certificate, qualification, or leadership role; and at least two volunteering rows with numeric hours. Extra award slots, and Form B’s third volunteering item, are the optional questions.
 
@@ -156,10 +156,11 @@ The Next.js app is unchanged.
 
 - **Type:** Form (several boxes on one question)
 - **Response:** Required
-- **Question text:** Volunteering item you would cite first. Enter the item name and the date or duration.
+- **Question text:** First volunteering item. Enter the work name, the duration, and a short description of the work. Enter the hours in the next question.
 - **Boxes, in order:**
-  - Item name
-  - Date or duration (for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026)
+  - Work name
+  - Duration (for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026)
+  - Short description of the work
 
 #### A_Vol1Hrs
 
@@ -168,20 +169,15 @@ The Next.js app is unchanged.
 - **Question text:** Hours served on that first volunteering item. Enter a whole number.
 - **Validation:** whole number, minimum 0. No date validation.
 
-#### A_Vol1Note
-
-- **Type:** Text entry, multi-line
-- **Response:** Required
-- **Question text:** In a few sentences, what did you do in that first volunteering role?
-
 #### A_Vol2
 
 - **Type:** Form (several boxes on one question)
 - **Response:** Required
-- **Question text:** A second volunteering item. Enter the item name and the date or duration.
+- **Question text:** Second volunteering item. Enter the work name, the duration, and a short description of the work. Enter the hours in the next question.
 - **Boxes, in order:**
-  - Item name
-  - Date or duration (for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026)
+  - Work name
+  - Duration (for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026)
+  - Short description of the work
 
 #### A_Vol2Hrs
 
@@ -189,12 +185,6 @@ The Next.js app is unchanged.
 - **Response:** Required
 - **Question text:** Hours served on that second volunteering item. Enter a whole number.
 - **Validation:** whole number, minimum 0. No date validation.
-
-#### A_Vol2Note
-
-- **Type:** Text entry, multi-line
-- **Response:** Required
-- **Question text:** In a few sentences, what did you do in that second volunteering role?
 
 #### A_VolTotal
 
@@ -352,20 +342,15 @@ The Next.js app is unchanged.
 - **Question text:** Hours served on the volunteering item you would feature first. Enter a whole number.
 - **Validation:** whole number, minimum 0. No date validation.
 
-#### B_Vol1Note
-
-- **Type:** Text entry, multi-line
-- **Response:** Required
-- **Question text:** Short account of that first volunteering item: what you did, and for whom.
-
 #### B_Vol1
 
 - **Type:** Form (several boxes on one question)
 - **Response:** Required
-- **Question text:** Name that first volunteering item and give its date or duration. Put the dates in the first box.
+- **Question text:** For that same volunteering item, enter the duration, a short description of the work, and the work name.
 - **Boxes, in order:**
-  - Date or duration (for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026)
-  - Item name
+  - Duration (for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026)
+  - Short description of the work
+  - Work name
 
 #### B_Vol2Hrs
 
@@ -374,33 +359,15 @@ The Next.js app is unchanged.
 - **Question text:** Hours served on a second volunteering item. Enter a whole number.
 - **Validation:** whole number, minimum 0. No date validation.
 
-#### B_Vol2Note
-
-- **Type:** Text entry, multi-line
-- **Response:** Required
-- **Question text:** Short account of that second volunteering item: what you did, and for whom.
-
 #### B_Vol2
 
 - **Type:** Form (several boxes on one question)
 - **Response:** Required
-- **Question text:** Name that second volunteering item and give its date or duration. Put the dates in the first box.
+- **Question text:** For that second item, enter the duration, a short description of the work, and the work name.
 - **Boxes, in order:**
-  - Date or duration (for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026)
-  - Item name
-
-#### B_Vol3Hrs
-
-- **Type:** Text entry, whole number, minimum 0
-- **Response:** Not required
-- **Question text:** Hours served on a third volunteering item, if you have one. Enter a whole number. If none, leave this blank.
-- **Validation:** whole number, minimum 0. No date validation.
-
-#### B_Vol3Note
-
-- **Type:** Text entry, multi-line
-- **Response:** Not required
-- **Question text:** Short account of that third volunteering item. If none, write N/A.
+  - Duration (for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026)
+  - Short description of the work
+  - Work name
 
 #### B_Vol3
 
@@ -408,8 +375,10 @@ The Next.js app is unchanged.
 - **Response:** Not required
 - **Question text:** A third volunteering item, if you have one. If none, write N/A in each box.
 - **Boxes, in order:**
-  - Date or duration (for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026)
-  - Item name
+  - Duration (for example 15 Nov 2026 or 1 Jan 2025 - 1 Jan 2026)
+  - Hours (a whole number, or N/A)
+  - Work name
+  - Short description of the work
 
 #### B_VolTotal
 
