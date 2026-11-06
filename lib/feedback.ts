@@ -1,8 +1,13 @@
-import { friendlySupabaseError } from "@/lib/supabase/errors";
 import { createClient } from "@/lib/supabase/client";
+import { formatLayeredError } from "@/lib/supabase/errors";
 
 export const FEEDBACK_COMMENT_MAX = 200;
 export const FEEDBACK_MINUTES_MAX = 600;
+
+/** Ask again only while this signed-in user has dismissed the dialog fewer than twice. */
+export const FEEDBACK_DISMISS_LIMIT = 2;
+
+const DISMISS_STORAGE_PREFIX = "evidence-vault:feedback-dismiss:";
 
 export type FeedbackMatch = "yes" | "mostly" | "no";
 
@@ -23,15 +28,65 @@ export type ValidFeedback = {
 
 export type FeedbackResult = { ok: true } | { ok: false; error: string };
 
-const SAVE_ERROR = "Could not save your feedback. Check your connection and try again.";
-
-function calmSaveError(message: string): string {
-  if (!message || /failed to fetch|network|load failed|typeerror/i.test(message)) return SAVE_ERROR;
-  return message;
-}
+const SAVE_ERROR = "Could not save your feedback";
 
 function isMatch(value: string): value is FeedbackMatch {
   return (MATCHED as readonly string[]).includes(value);
+}
+
+export function feedbackDismissStorageKey(userId: string): string {
+  return `${DISMISS_STORAGE_PREFIX}${userId}`;
+}
+
+/** Dismissal count for this user. A missing or unreadable value counts as zero. */
+export function readFeedbackDismissals(userId: string): number {
+  if (!userId || typeof window === "undefined") return 0;
+  try {
+    const raw = window.localStorage.getItem(feedbackDismissStorageKey(userId));
+    if (raw === null || !/^\d+$/.test(raw)) return 0;
+    const value = Number(raw);
+    return Number.isSafeInteger(value) ? value : 0;
+  } catch {
+    return 0;
+  }
+}
+
+/** Records one dismissal. Storage failures still let the dialog close. */
+export function recordFeedbackDismissal(userId: string): void {
+  if (!userId || typeof window === "undefined") return;
+  try {
+    const next = readFeedbackDismissals(userId) + 1;
+    window.localStorage.setItem(feedbackDismissStorageKey(userId), String(next));
+  } catch {
+    // The PDF must stay usable when the browser blocks localStorage.
+  }
+}
+
+export type FeedbackPromptDecision = { ask: true; userId: string } | { ask: false };
+
+/**
+ * Show the prompt only when this user has no feedback rows and fewer than two dismissals.
+ * The row check is head/count of id for the signed-in user. It never reads comment text.
+ */
+export async function shouldAskForFeedback(): Promise<FeedbackPromptDecision> {
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user?.id) return { ask: false };
+
+    const userId = data.user.id;
+    if (readFeedbackDismissals(userId) >= FEEDBACK_DISMISS_LIMIT) return { ask: false };
+
+    const { count, error: countError } = await supabase
+      .from("feedback")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId);
+
+    if (countError || typeof count !== "number") return { ask: false };
+    return count === 0 ? { ask: true, userId } : { ask: false };
+  } catch {
+    return { ask: false };
+  }
 }
 
 /**
@@ -106,34 +161,43 @@ export function validateFeedback(
   };
 }
 
+function isAbort(cause: unknown, signal?: AbortSignal): boolean {
+  if (signal?.aborted) return true;
+  if (!cause || typeof cause !== "object") return false;
+  const name = "name" in cause && typeof cause.name === "string" ? cause.name : "";
+  const message = "message" in cause && typeof cause.message === "string" ? cause.message : "";
+  return name === "AbortError" || /aborted/i.test(message);
+}
+
 /**
  * Inserts one pdf_export row. Requires the public.feedback SQL from the pull request.
  * This function does not run that SQL. Invalid answers are rejected before any request.
+ * Pass a signal so closing the dialog can cancel an insert that has not finished.
  */
-export async function submitFeedback(input: FeedbackInput): Promise<FeedbackResult> {
+export async function submitFeedback(
+  input: FeedbackInput,
+  signal?: AbortSignal,
+): Promise<FeedbackResult> {
   const validated = validateFeedback(input);
   if (!validated.ok) return validated;
+  if (signal?.aborted) return { ok: false, error: SAVE_ERROR };
 
   try {
     const supabase = createClient();
-    const { error } = await supabase.from("feedback").insert({
+    let request = supabase.from("feedback").insert({
       kind: "pdf_export",
       matched: validated.value.matched,
       // SELF-REPORT. Not a measured duration.
       minutes_normally: validated.value.minutesNormally,
       comment: validated.value.comment,
     });
-    if (error) {
-      return {
-        ok: false,
-        error: calmSaveError(friendlySupabaseError(error, SAVE_ERROR)),
-      };
-    }
+    if (signal) request = request.abortSignal(signal);
+    const { error } = await request;
+    if (isAbort(error, signal)) return { ok: false, error: SAVE_ERROR };
+    if (error) return { ok: false, error: formatLayeredError(SAVE_ERROR, error) };
     return { ok: true };
   } catch (cause) {
-    return {
-      ok: false,
-      error: calmSaveError(cause instanceof Error ? cause.message : ""),
-    };
+    if (isAbort(cause, signal)) return { ok: false, error: SAVE_ERROR };
+    return { ok: false, error: formatLayeredError(SAVE_ERROR, cause) };
   }
 }
